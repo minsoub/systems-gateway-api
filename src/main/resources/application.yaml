@@ -1,0 +1,41 @@
+# Spring Cloud Gateway server port
+server:
+  port: 8080
+
+# Spring cloud gateway setup
+spring:
+  cloud:
+    gateway:
+      # gateway common filter
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway GlobalFilter
+            preLogger: true
+            postLogger: true
+      # Route definition
+      # ID, Destination(uri), Predicate, filter definition
+      routes:
+        - id: auth-service
+          # destination
+          uri: http://localhost:9091
+          # Condition
+          predicates:
+            - Path=/user/**
+          # Filter
+          filters:
+            - name: UserFilter
+              args:
+                baseMessage: UserFilter apply
+                preLogger: true
+                postLooger: true
+        - id: shop-service
+          uri: http://localhost:9092
+          predicates:
+            - Path=/shop/**
+          filters:
+            - name: ShopFilter
+              args:
+                baseMessage: ShopFilter apply
+                preLogger: true
+                postLogger: true
