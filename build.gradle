@@ -1,8 +1,7 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.3'
+    id 'org.springframework.boot' version '2.5.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
-    id 'war'
 }
 
 group 'com.bithumbsystems'
@@ -13,15 +12,19 @@ repositories {
     mavenCentral()
 }
 
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
 }
-apply plugin: 'io.spring.dependency-management'
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.0'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.3'
+        //mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:2.3.3"
     }
 }
 

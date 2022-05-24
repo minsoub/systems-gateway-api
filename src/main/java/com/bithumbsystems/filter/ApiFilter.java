@@ -9,9 +9,9 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class ShopFilter extends AbstractGatewayFilterFactory<Config> {
+public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
 
-    public ShopFilter() {
+    public ApiFilter() {
         super(Config.class);
     }
 

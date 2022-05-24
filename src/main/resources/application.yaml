@@ -1,6 +1,6 @@
 # Spring Cloud Gateway server port
 server:
-  port: 8080
+  port: 7070
 
 # Spring cloud gateway setup
 spring:
@@ -16,9 +16,9 @@ spring:
       # Route definition
       # ID, Destination(uri), Predicate, filter definition
       routes:
-        - id: auth-service
+        - id: user-service
           # destination
-          uri: http://localhost:9091
+          uri: http://localhost:8080
           # Condition
           predicates:
             - Path=/user/**
@@ -29,13 +29,41 @@ spring:
                 baseMessage: UserFilter apply
                 preLogger: true
                 postLooger: true
-        - id: shop-service
+            - RewritePath=/user/(?<path>.*),/api/v1/user/$\{path}
+        - id: adm-service
+          # destination
+          uri: http://localhost:8080
+          # Condition
+          predicates:
+            - Path=/adm/**
+          # Filter
+          filters:
+            - name: UserFilter
+              args:
+                baseMessage: UserFilter apply
+                preLogger: true
+                postLooger: true
+            - RewritePath=/adm/(?<path>.*),/api/v1/adm/$\{path}
+        - id: auth-service
+          # destination
+          uri: http://localhost:8080
+          # Condition
+          predicates:
+            - Path=/auth/**
+          # Filter
+          filters:
+            - name: AuthFilter
+              args:
+                baseMessage: AuthFilter apply
+                preLogger: true
+                postLooger: true
+        - id: api-service
           uri: http://localhost:9092
           predicates:
-            - Path=/shop/**
+            - Path=/api/**
           filters:
-            - name: ShopFilter
+            - name: ApiFilter
               args:
-                baseMessage: ShopFilter apply
+                baseMessage: ApiFilter apply
                 preLogger: true
                 postLogger: true
