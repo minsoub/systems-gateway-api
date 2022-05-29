@@ -1,6 +1,7 @@
 package com.bithumbsystems.filter;
 
 import com.bithumbsystems.config.Config;
+import com.bithumbsystems.config.constant.GlobalConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -13,33 +14,33 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class AuthFilter extends AbstractGatewayFilterFactory<Config> {
+public class MngApiFilter  extends AbstractGatewayFilterFactory<Config> {
 
-    public AuthFilter() {
+    public MngApiFilter() {
         super(Config.class);
     }
-    private final String TOKEN_HEADER = "BEARER";
 
     @Override
     public GatewayFilter apply(final Config config) {
         return (exchange, chain) -> {
-            log.info("AuthFilter baseMessage: {}", config.getBaseMessage());
+            log.info("MngApiFilter baseMessage: {}", config.getBaseMessage());
 
             if (config.isPreLooger()) {
-                log.info("AuthFilter Start: {}", exchange.getRequest());
+                log.info("MngApiFilter Start: {}", exchange.getRequest());
             }
 
             ServerHttpRequest request = exchange.getRequest();
 
             // Request Header 검증 : Token
-            if (!request.getHeaders().containsKey(TOKEN_HEADER)) {
+            if (!request.getHeaders().containsKey(GlobalConstant.TOKEN_HEADER)) {
                 return handleUnAuthorized(exchange);   // 401 Error
             }
 
 
+
             return chain.filter(exchange).then(Mono.fromRunnable(()-> {
                 if (config.isPostLogger()) {
-                    log.info("AuthFilter End: {}", exchange.getResponse());
+                    log.info("MngApiFilter End: {}", exchange.getResponse());
                 }
             }));
         };
