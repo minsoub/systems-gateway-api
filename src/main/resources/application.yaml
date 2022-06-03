@@ -1,6 +1,16 @@
 # Spring Cloud Gateway server port
 server:
   port: 7070
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics, prometheus, health
+spring:
+  cloud:
+    gateway:
+      metrics:
+        enabled: true
 ---
 spring:
   config:
@@ -12,8 +22,7 @@ spring:
     lrcAppUrl: http://localhost:8082
     cpcAppUrl: http://localhost:8083
 logging:
-  level:
-    root: ${auth.api.logging.level.root:DEBUG}
+  config: classpath:logback-spring-${spring.profiles.active}.xml
 ---
 spring:
   config:
@@ -24,6 +33,20 @@ spring:
     smartAdminUrl: http://localhost:8081
     lrcAppUrl: http://localhost:8082
     cpcAppUrl: http://localhost:8083
+logging:
+  config: classpath:logback-spring-${spring.profiles.active}.xml
+---
+spring:
+  config:
+    activate:
+      on-profile: eks-dev
+  client:
+    authUrl: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
+    smartAdminUrl: http://localhost:8081
+    lrcAppUrl: http://localhost:8082
+    cpcAppUrl: http://localhost:8083
+logging:
+  config: classpath:logback-spring-dev.xml
 ---
 spring:
   config:
@@ -34,6 +57,8 @@ spring:
     smartAdminUrl: http://localhost:8081
     lrcAppUrl: http://localhost:8082
     cpcAppUrl: http://localhost:8083
+logging:
+  config: classpath:logback-spring-${spring.profiles.active}.xml
 ---
 # Spring cloud gateway setup
 spring:
