@@ -1,12 +1,17 @@
 package com.bithumbsystems.config.properties;
 
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@Getter
+@Data
+@Component
+@ConfigurationProperties(prefix = "sites")
+@ConfigurationPropertiesScan
 public class UrlConfig {
-    @Value("${spring.client.authUrl}")
     private String authUrl;
+    private String smartAdminUrl;
+    private String lrcAppUrl;
+    private String cpcAppUrl;
 }

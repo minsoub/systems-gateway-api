@@ -6,7 +6,7 @@ plugins {
 
 group 'com.bithumbsystems'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '13'
 
 repositories {
     mavenCentral()
@@ -32,6 +32,7 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     annotationProcessor("org.projectlombok:lombok")
     compileOnly("org.projectlombok:lombok")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway")

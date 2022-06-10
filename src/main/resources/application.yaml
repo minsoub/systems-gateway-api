@@ -16,49 +16,49 @@ spring:
   config:
     activate:
       on-profile: local
-  client:
-    authUrl: http://localhost:8080
-    smartAdminUrl: http://localhost:8081
-    lrcAppUrl: http://localhost:8082
-    cpcAppUrl: http://localhost:8083
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+sites:
+  auth-url: http://localhost:8080
+  smart-admin-url: http://localhost:8081
+  lrc-app-url: http://localhost:8082
+  cpc-app-url: http://localhost:8083
 ---
 spring:
   config:
     activate:
       on-profile: dev
-  client:
-    authUrl: http://localhost:8080
-    smartAdminUrl: http://localhost:8081
-    lrcAppUrl: http://localhost:8082
-    cpcAppUrl: http://localhost:8083
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+sites:
+  auth-url: http://localhost:8080
+  smart-admin-url: http://localhost:8081
+  lrc-app-url: http://localhost:8082
+  cpc-app-url: http://localhost:8083
 ---
 spring:
   config:
     activate:
       on-profile: eks-dev
-  client:
-    authUrl: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
-    smartAdminUrl: http://localhost:8081
-    lrcAppUrl: http://localhost:8082
-    cpcAppUrl: http://localhost:8083
 logging:
   config: classpath:logback-spring-dev.xml
+sites:
+  auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
+  smart-admin-url: http://localhost:8081
+  lrc-app-url: http://localhost:8082
+  cpc-app-url: http://localhost:8083
 ---
 spring:
   config:
     activate:
       on-profile: prod
-  client:
-    authUrl: http://localhost:8080
-    smartAdminUrl: http://localhost:8081
-    lrcAppUrl: http://localhost:8082
-    cpcAppUrl: http://localhost:8083
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+sites:
+  auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
+  smart-admin-url: http://localhost:8081
+  lrc-app-url: http://localhost:8082
+  cpc-app-url: http://localhost:8083
 ---
 # Spring cloud gateway setup
 spring:
