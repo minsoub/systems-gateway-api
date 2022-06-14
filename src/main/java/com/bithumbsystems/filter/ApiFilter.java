@@ -2,7 +2,6 @@ package com.bithumbsystems.filter;
 
 import com.bithumbsystems.config.Config;
 import com.bithumbsystems.config.constant.GlobalConstant;
-import com.bithumbsystems.config.properties.UrlConfig;
 import com.bithumbsystems.exception.GatewayException;
 import com.bithumbsystems.exception.GatewayExceptionHandler;
 import com.bithumbsystems.model.enums.ErrorCode;
@@ -11,10 +10,7 @@ import com.bithumbsystems.utils.CommonUtil;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -37,11 +33,11 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Component
-//@RequiredArgsConstructor
 public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
 
     @Value("${sites.auth-url}")
@@ -52,9 +48,8 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     private String lrcAppUrl;
     @Value("${sites.cpc-app-url}")
     private String cpcAppUrl;
-
-    //@Autowired
-    //private final UrlConfig urlConfig;
+    @Value("#{'${sites.lrc-token-ignore}'.split(',')}")
+    private List<String> tokenIgnoreLrc;
 
     public ApiFilter() {
         super(Config.class);
@@ -125,7 +120,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             // Redirect URI
             if (site_id.equals(GlobalConstant.LRC_SITE_ID)) {
                 goUrl.set(lrcAppUrl);
-            }else if(site_id.equals(GlobalConstant.LRC_SITE_ID)) {
+            }else if(site_id.equals(GlobalConstant.CPC_SITE_ID)) {
                 goUrl.set(cpcAppUrl);
             }else {
                 goUrl.set(smartAdminUrl);
@@ -142,7 +137,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             if (StringUtils.hasLength(exchange.getRequest().getURI().getQuery())) {
                 replaceUrl += "?"+exchange.getRequest().getURI().getQuery();
             }
-            log.debug(replaceUrl);
+            log.debug("replaceUrl:"+ replaceUrl);
             URI uri = URI.create(replaceUrl);
             ServerHttpRequest serverHttpRequest = exchange.getRequest().mutate()
                     .headers(httpHeaders -> {
@@ -153,13 +148,20 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
 
             if (site_id.equals(GlobalConstant.CPC_SITE_ID)) {   // 투자보호 센터 : No Token
                 log.debug("cpc_site_id ");
-                return chain.filter(exchange.mutate().request(serverHttpRequest).build()).then(Mono.fromRunnable(()-> {
+                return chain.filter(exchange.mutate().request(serverHttpRequest).build()).then(Mono.fromRunnable(() -> {
                     if (config.isPostLogger()) {
                         log.info("ApiFilter End: {}", exchange.getResponse());
                     }
                 }));
 
                 //return chain.filter(exchange);
+            }else if (site_id.equals(GlobalConstant.LRC_SITE_ID) && tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath())) {   // 거래지원 센터 : ignore 예외처리
+                log.debug("lrc ignore path:"+ exchange.getRequest().getURI().getPath());
+                return chain.filter(exchange.mutate().request(serverHttpRequest).build()).then(Mono.fromRunnable(() -> {
+                    if (config.isPostLogger()) {
+                        log.info("ApiFilter End: {}", exchange.getResponse());
+                    }
+                }));
             }else { // mng, lrc
                 // Request Header 검증 : Token
                 if (!request.getHeaders().containsKey(GlobalConstant.TOKEN_HEADER)) {

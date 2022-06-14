@@ -23,6 +23,7 @@ sites:
   smart-admin-url: http://localhost:8081
   lrc-app-url: http://localhost:8082
   cpc-app-url: http://localhost:8083
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
 ---
 spring:
   config:
@@ -35,6 +36,7 @@ sites:
   smart-admin-url: http://localhost:8081
   lrc-app-url: http://localhost:8082
   cpc-app-url: http://localhost:8083
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
 ---
 spring:
   config:
@@ -47,6 +49,7 @@ sites:
   smart-admin-url: http://localhost:8081
   lrc-app-url: http://localhost:8082
   cpc-app-url: http://localhost:8083
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
 ---
 spring:
   config:
@@ -59,6 +62,7 @@ sites:
   smart-admin-url: http://localhost:8081
   lrc-app-url: http://localhost:8082
   cpc-app-url: http://localhost:8083
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
 ---
 # Spring cloud gateway setup
 spring:

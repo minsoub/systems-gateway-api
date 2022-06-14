@@ -54,6 +54,16 @@ public class UserAuthRoute {
                                 .filters(filter -> filter.filter(authFilter.apply(new Config("AuthFilter apply", true, true))))
                                 .uri(urlConfig.getAuthUrl())
                 )
+                .route("api-service-cpc",   // 고객보호 API 서비스 호출
+                        route -> route.path("/api/*/cpc/**")
+                                    .filters(filter -> filter.filter(apiFilter.apply(new Config("CPC ApiFilter apply", true, true))))
+                                .uri(urlConfig.getCpcAppUrl())
+                )
+                .route("api-service-lrc",   // 거래지원 API 서비스 호출
+                        route -> route.path("/api/*/lrc/**")
+                                .filters(filter -> filter.filter(apiFilter.apply(new Config("LRC ApiFilter apply", true, true))))
+                                .uri(urlConfig.getLrcAppUrl())
+                )
                 .route("api-service",   // API 서비스 호출
                         route -> route.path("/api/**")
                                 .filters(filter -> filter.filter(apiFilter.apply(new Config("ApiFilter apply", true, true))))

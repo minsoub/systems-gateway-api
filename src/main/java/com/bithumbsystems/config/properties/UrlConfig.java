@@ -14,4 +14,5 @@ public class UrlConfig {
     private String smartAdminUrl;
     private String lrcAppUrl;
     private String cpcAppUrl;
+    private String lrcTokenIgnore;
 }
