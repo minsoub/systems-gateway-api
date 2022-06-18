@@ -11,6 +11,15 @@ spring:
     gateway:
       metrics:
         enabled: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allow-credentials: false
+            allowedHeaders: "*"
+            allowedMethods: "*"
 ---
 spring:
   config:
