@@ -35,7 +35,7 @@ sites:
   auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
   smart-admin-url: http://k8s-systemsd-systemsm-3411cecba4-a185780c02b3ce0f.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
-  cpc-app-url: k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
+  cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
   lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
 ---
 spring:
@@ -48,7 +48,7 @@ sites:
   auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
   smart-admin-url: http://k8s-systemsd-systemsm-3411cecba4-a185780c02b3ce0f.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
-  cpc-app-url: k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
+  cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
   lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
 ---
 spring:
@@ -61,7 +61,7 @@ sites:
   auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
   smart-admin-url: http://k8s-systemsd-systemsm-3411cecba4-a185780c02b3ce0f.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
-  cpc-app-url: k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
+  cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
   lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
 ---
 # Spring cloud gateway setup
