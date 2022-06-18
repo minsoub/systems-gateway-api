@@ -6,7 +6,7 @@ plugins {
 
 group 'com.bithumbsystems'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '13'
+sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
