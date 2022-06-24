@@ -64,10 +64,24 @@ public class UserAuthRoute {
                                 .filters(filter -> filter.filter(apiFilter.apply(new Config("LRC ApiFilter apply", true, true))))
                                 .uri(urlConfig.getLrcAppUrl())
                 )
-                .route("api-service",   // API 서비스 호출
+                .route("api-service-mng-lrc",   // API 서비스 호출 (LRC Smart Admin)
+                        route -> route.path("/api/*/mng/lrc/**")
+                                .filters(filter -> filter.filter(apiFilter.apply(new Config("LRC Smart Admin ApiFilter apply", true, true))))
+                                .uri(urlConfig.getSmartAdminLrcUrl())
+
+                )
+                .route("api-service-mng-cpc",   // API 서비스 호출 (CP Smart Admin)
+                        route -> route.path("/api/*/mng/cpc/**")
+                                .filters(filter -> filter.filter(apiFilter.apply(new Config("LRC Smart Admin ApiFilter apply", true, true))))
+                                .uri(urlConfig.getSmartAdminCpcUrl())
+
+                )
+                .route("api-service",   // API 서비스 호출 (Smart Admin)
                         route -> route.path("/api/**")
                                 .filters(filter -> filter.filter(apiFilter.apply(new Config("ApiFilter apply", true, true))))
                                 .uri(urlConfig.getSmartAdminUrl())
-                ).build();
+
+                )
+                .build();
     }
 }

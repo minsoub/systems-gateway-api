@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 public class UrlConfig {
     private String authUrl;
     private String smartAdminUrl;
+    private String smartAdminLrcUrl;
+    private String smartAdminCpcUrl;
     private String lrcAppUrl;
     private String cpcAppUrl;
     private String lrcTokenIgnore;
