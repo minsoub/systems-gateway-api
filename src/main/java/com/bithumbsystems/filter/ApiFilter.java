@@ -193,7 +193,8 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                             //handleUnAuthorized(exchange);
                             log.debug("onErrorResume ==========================");
                             log.debug("error => {}", error);
-                            throw new RuntimeException("error => " + error);
+                            throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
+                            //throw new RuntimeException("error => " + error);
                             //return Mono.error(new RuntimeException("error => "+error));
                         })
                         .flatMap(result -> {

@@ -27,8 +27,8 @@ logging:
 sites:
   auth-url: http://localhost:8080
   smart-admin-url: http://localhost:8081
-  smart-admin-lrc-url: http://localhost:8002
-  smart-admin-cpc-url: http://localhost:8003
+  smart-admin-lrc-url: http://localhost:8082
+  smart-admin-cpc-url: http://localhost:8083
   lrc-app-url: http://localhost:8084
   cpc-app-url: http://localhost:8085
   lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
