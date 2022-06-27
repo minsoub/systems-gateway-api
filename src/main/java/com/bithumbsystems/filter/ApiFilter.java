@@ -155,7 +155,8 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                 }));
 
                 //return chain.filter(exchange);
-            }else if (site_id.equals(GlobalConstant.LRC_SITE_ID) && tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath())) {   // 거래지원 센터 : ignore 예외처리
+            }else if (site_id.equals(GlobalConstant.LRC_SITE_ID)
+                    && (tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath()) || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/join/valid") == 0)
                 log.debug("lrc ignore path:"+ exchange.getRequest().getURI().getPath());
                 return chain.filter(exchange.mutate().request(serverHttpRequest).build()).then(Mono.fromRunnable(() -> {
                     if (config.isPostLogger()) {

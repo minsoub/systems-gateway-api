@@ -31,7 +31,7 @@ sites:
   smart-admin-cpc-url: http://localhost:8083
   lrc-app-url: http://localhost:8084
   cpc-app-url: http://localhost:8085
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification
 ---
 spring:
   config:
@@ -46,7 +46,7 @@ sites:
   smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification
 ---
 spring:
   config:
@@ -61,7 +61,7 @@ sites:
   smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification
 ---
 spring:
   config:
@@ -76,7 +76,7 @@ sites:
   smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification
 ---
 # Spring cloud gateway setup
 spring:
