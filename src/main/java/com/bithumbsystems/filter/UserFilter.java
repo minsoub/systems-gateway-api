@@ -4,7 +4,6 @@ import com.bithumbsystems.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -21,11 +20,9 @@ public class UserFilter extends AbstractGatewayFilterFactory<Config> {
         return (exchange, chain) -> {
             log.info("UserFilter baseMessage: {}", config.getBaseMessage());
 
-            if (config.isPreLooger()) {
+            if (config.isPreLogger()) {
                 log.info("UserFilter Start: {}", exchange.getRequest());
             }
-
-            ServerHttpRequest request = exchange.getRequest();
 
             // Request Header 검증
 

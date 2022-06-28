@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Getter
-public class UrlConfig {
+public class UrlProperties {
     @Value("${spring.client.authUrl}")
     private String authUrl;
 }

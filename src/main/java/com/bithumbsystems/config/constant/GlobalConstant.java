@@ -1,6 +1,9 @@
 package com.bithumbsystems.config.constant;
 
 public final class GlobalConstant {
+    public static final String KMS_ALIAS_NAME = "key";
+    public static final String SQS_URL = "sqs_url";
+
     public static final String TOKEN_HEADER = "Authorization";
     public static final String BEARER = "Bearer ";
     public static final String USER_IP = "user_ip";

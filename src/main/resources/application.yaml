@@ -4,6 +4,7 @@ server:
 ---
 spring:
   config:
+    import: classpath:aws-properties.yml
     activate:
       on-profile: local
   client:
@@ -13,10 +14,11 @@ spring:
     cpcAppUrl: http://localhost:8083
 logging:
   level:
-    root: ${auth.api.logging.level.root:DEBUG}
+    root: ${api.logging.level.root:DEBUG}
 ---
 spring:
   config:
+    import: classpath:aws-properties-dev.yml
     activate:
       on-profile: dev
   client:
@@ -27,6 +29,7 @@ spring:
 ---
 spring:
   config:
+    import: classpath:aws-properties-dev.yml
     activate:
       on-profile: prod
   client:
@@ -36,16 +39,16 @@ spring:
     cpcAppUrl: http://localhost:8083
 ---
 # Spring cloud gateway setup
-spring:
-  cloud:
-    gateway:
-      # gateway common filter
-      default-filters:
-        - name: GlobalFilter
-          args:
-            baseMessage: Spring Cloud Gateway GlobalFilter
-            preLogger: true
-            postLogger: true
+#spring:
+#  cloud:
+#    gateway:
+#      # gateway common filter
+#      default-filters:
+#        - name: GlobalFilter
+#          args:
+#            baseMessage: Spring Cloud Gateway GlobalFilter
+#            preLogger: true
+#            postLogger: true
 #       #Route definition
 #       #ID, Destination(uri), Predicate, filter definition
 #      routes:

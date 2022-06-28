@@ -1,6 +1,6 @@
 package com.bithumbsystems.config;
 
-import com.bithumbsystems.config.properties.UrlConfig;
+import com.bithumbsystems.config.properties.UrlProperties;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -24,18 +24,17 @@ import javax.annotation.PreDestroy;
 @RequiredArgsConstructor
 public class WebClientConfig {
 
-    private final UrlConfig urlProperties;
+    private final UrlProperties urlProperties;
 
     @Bean
     public WebClient webClient()
     {
         HttpClient httpClient = HttpClient.create()
-                .tcpConfiguration(client ->
-                    client.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                            .doOnConnected(conn -> conn
-                                    .addHandlerLast(new ReadTimeoutHandler(10))
-                                    .addHandlerLast(new WriteTimeoutHandler(10)))
-                );
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+            .doOnConnected(conn -> conn
+                .addHandlerLast(new ReadTimeoutHandler(10))
+                .addHandlerLast(new WriteTimeoutHandler(10)));
+
         ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
 
         return WebClient.builder()

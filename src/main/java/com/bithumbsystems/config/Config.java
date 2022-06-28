@@ -4,13 +4,13 @@ import lombok.Getter;
 
 @Getter
 public class Config {
-    private String baseMessage;
-    private boolean preLooger;
-    private boolean postLogger;
+    private final String baseMessage;
+    private final boolean preLogger;
+    private final boolean postLogger;
 
-    public Config(String baseMessage, boolean preLooger, boolean postLogger) {
+    public Config(String baseMessage, boolean preLogger, boolean postLogger) {
         this.baseMessage = baseMessage;
-        this.preLooger = preLooger;
+        this.preLogger = preLogger;
         this.postLogger = postLogger;
     }
 }

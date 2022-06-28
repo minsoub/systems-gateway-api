@@ -1,7 +1,6 @@
 package com.bithumbsystems.filter;
 
 import com.bithumbsystems.config.Config;
-import com.bithumbsystems.config.constant.GlobalConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -25,16 +24,16 @@ public class MngApiFilter  extends AbstractGatewayFilterFactory<Config> {
         return (exchange, chain) -> {
             log.info("MngApiFilter baseMessage: {}", config.getBaseMessage());
 
-            if (config.isPreLooger()) {
+            if (config.isPreLogger()) {
                 log.info("MngApiFilter Start: {}", exchange.getRequest());
             }
 
             ServerHttpRequest request = exchange.getRequest();
 
             // Request Header 검증 : Token
-            if (!request.getHeaders().containsKey(GlobalConstant.TOKEN_HEADER)) {
-                return handleUnAuthorized(exchange);   // 401 Error
-            }
+//            if (!request.getHeaders().containsKey(GlobalConstant.TOKEN_HEADER)) {
+//                return handleUnAuthorized(exchange);   // 401 Error
+//            }
 
 
 

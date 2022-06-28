@@ -4,18 +4,15 @@ import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.model.response.ErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.log4j.Log4j2;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
 
 @Log4j2
 public class GatewayExceptionHandler  implements ErrorWebExceptionHandler {
@@ -38,7 +35,7 @@ public class GatewayExceptionHandler  implements ErrorWebExceptionHandler {
             errorMessage = ErrorCode.valueOf(e.getMessage()).getMessage();
             errorData = ErrorData.builder().code(errorCode).message(errorMessage).build();
         }else {
-            errorData = new ErrorData(ErrorCode.UNKOWN_ERROR);
+            errorData = new ErrorData(ErrorCode.UNKNOWN_ERROR);
         }
 
         byte[] bytes = new byte[0];  //  errorCodeMaker(errorCode, ex.getMessage().toString()).getBytes(StandardCharsets.UTF_8);

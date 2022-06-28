@@ -25,7 +25,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<Config> {
         return (exchange, chain) -> {
             log.info("AuthFilter baseMessage: {}", config.getBaseMessage());
 
-            if (config.isPreLooger()) {
+            if (config.isPreLogger()) {
                 log.info("AuthFilter Start: {}", exchange.getRequest());
             }
 
