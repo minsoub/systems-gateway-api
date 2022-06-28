@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <property name="LOG_DIR" value="/app/logs"/>
+    <property name="LOG_PATH_NAME" value="${LOG_DIR}/spring.log"/>
+    <property name="ERROR_LOG_PATH_NAME" value="${LOG_DIR}/error/spring-error.log"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) ${PID:-} --- %green([%thread]) %cyan(%logger{35}) : %msg %n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="ROLLING_ROOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH_NAME}</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread] %-5level %logger{35} %mdc - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH_NAME}.%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500mb</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ROLLING_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${ERROR_LOG_PATH_NAME}</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread] %-5level %logger{35} %mdc - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${ERROR_LOG_PATH_NAME}.%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500mb</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="com.bithumbsystems" level="DEBUG" additivity="false">
+        <appender-ref ref="ROLLING_ROOT"/>
+        <appender-ref ref="ROLLING_ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.apache.coyote.http11.Http11InputBuffer" level="DEBUG" additivity="false">
+        <appender-ref ref="ROLLING_ROOT"/>
+        <appender-ref ref="ROLLING_ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="springframework.security" level="DEBUG" additivity="false">
+        <appender-ref ref="ROLLING_ROOT"/>
+        <appender-ref ref="ROLLING_ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="ROLLING_ROOT"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

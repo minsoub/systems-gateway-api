@@ -1,65 +1,87 @@
 package com.bithumbsystems.routes;
 
 import com.bithumbsystems.config.Config;
+import com.bithumbsystems.config.properties.UrlConfig;
 import com.bithumbsystems.filter.ApiFilter;
 import com.bithumbsystems.filter.AuthFilter;
 import com.bithumbsystems.filter.UserFilter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Log4j2
 @Configuration
+@RequiredArgsConstructor
 public class UserAuthRoute {
 
-  @Value("${spring.client.authUrl}")
-  private String authUrl;
-  @Value("${spring.client.smartAdminUrl}")
-  private String smartAdminUrl;
-  @Value("${spring.client.lrcAppUrl}")
-  private String lrcAppUrl;
-  @Value("${spring.client.cpcAppUrl}")
-  private String cpcAppUrl;
+//    @Value("${sites.auth-url}")
+//    private String authUrl;
+//    @Value("${sites.smart-admin-url}")
+//    private String smartAdminUrl;
+//    @Value("${sites.lrc-app-url}")
+//    private String lrcAppUrl;
+//    @Value("${sites.cpc-app-url}")
+//    private String cpcAppUrl;
 
-  private final WebClient webClient;
+    private final UrlConfig urlConfig;
+    private final UserFilter userFilter;
+    private final AuthFilter authFilter;
+    private final ApiFilter apiFilter;
 
-  public UserAuthRoute(WebClient webClient) {
-    this.webClient = webClient;
-  }
+    @Bean
+    public RouteLocator routes(RouteLocatorBuilder builder) {
+        log.debug(urlConfig.getAuthUrl());
+        return builder.routes()
+                .route("user-service",   // 운영자 로그인 처리
+                        route -> route.path("/user/**")
+                                .filters(filter -> filter.rewritePath("/user/(?<path>.*)", "/api/v1/user/${path}")
+                                        //.filter(new UserFilter().apply(new Config("UserFilter apply", true, true))))
+                                        .filter(userFilter.apply(new Config("UserFilter apply", true, true))))
+                                .uri(urlConfig.getAuthUrl())
+                )
+                .route("adm-service",   // 운영자 로그인 처리
+                        route -> route.path("/adm/**")
+                                .filters(filter -> filter.rewritePath("/adm/(?<path>.*)", "/api/v1/adm/${path}")
+                                        .filter(userFilter.apply(new Config("UserFilter apply", true, true))))
+                                .uri(urlConfig.getAuthUrl())
+                )
+                .route("auth-service",
+                        route ->route.path("/auth/**")
+                                .filters(filter -> filter.filter(authFilter.apply(new Config("AuthFilter apply", true, true))))
+                                .uri(urlConfig.getAuthUrl())
+                )
+                .route("api-service-cpc",   // 고객보호 API 서비스 호출
+                        route -> route.path("/api/*/cpc/**")
+                                    .filters(filter -> filter.filter(apiFilter.apply(new Config("CPC ApiFilter apply", true, true))))
+                                .uri(urlConfig.getCpcAppUrl())
+                )
+                .route("api-service-lrc",   // 거래지원 API 서비스 호출
+                        route -> route.path("/api/*/lrc/**")
+                                .filters(filter -> filter.filter(apiFilter.apply(new Config("LRC ApiFilter apply", true, true))))
+                                .uri(urlConfig.getLrcAppUrl())
+                )
+                .route("api-service-mng-lrc",   // API 서비스 호출 (LRC Smart Admin)
+                        route -> route.path("/api/*/mng/lrc/**")
+                                .filters(filter -> filter.filter(apiFilter.apply(new Config("LRC Smart Admin ApiFilter apply", true, true))))
+                                .uri(urlConfig.getSmartAdminLrcUrl())
 
-  @Bean
-  public RouteLocator routes(RouteLocatorBuilder builder) {
-    log.debug(authUrl);
-    return builder.routes()
-        .route("user-service",   // 운영자 로그인 처리
-            route -> route.path("/user/**")
-                .filters(filter -> filter.rewritePath("/user/(?<path>.*)", "/api/v1/user/${path}")
-                    .filter(new UserFilter().apply(
-                        new Config("UserFilter apply", true, true))))
-                .uri(authUrl)
-        )
-        .route("adm-service",   // 운영자 로그인 처리
-            route -> route.path("/adm/**")
-                .filters(filter -> filter.rewritePath("/adm/(?<path>.*)", "/api/v1/adm/${path}")
-                    .filter(new UserFilter().apply(
-                        new Config("UserFilter apply", true, true))))
-                .uri(authUrl)
-        )
-        .route("auth-service",
-            route -> route.path("/auth/**")
-                .filters(filter -> filter.filter(
-                    new AuthFilter().apply(new Config("AuthFilter apply", true, true))))
-                .uri(authUrl)
-        )
-        .route("api-service",   // API 서비스 호출
-            route -> route.path("/api/**")
-                .filters(filter -> filter.filter(new ApiFilter(webClient).apply(
-                    new Config("ApiFilter apply", true, true))))
-                .uri(smartAdminUrl)
-        ).build();
-  }
+                )
+                .route("api-service-mng-cpc",   // API 서비스 호출 (CP Smart Admin)
+                        route -> route.path("/api/*/mng/cpc/**")
+                                .filters(filter -> filter.filter(apiFilter.apply(new Config("LRC Smart Admin ApiFilter apply", true, true))))
+                                .uri(urlConfig.getSmartAdminCpcUrl())
+
+                )
+                .route("api-service",   // API 서비스 호출 (Smart Admin)
+                        route -> route.path("/api/**")
+                                .filters(filter -> filter.filter(apiFilter.apply(new Config("ApiFilter apply", true, true))))
+                                .uri(urlConfig.getSmartAdminUrl())
+
+                )
+                .build();
+    }
 }

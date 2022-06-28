@@ -1,42 +1,85 @@
 # Spring Cloud Gateway server port
 server:
   port: 7070
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics, prometheus, health
+spring:
+  cloud:
+    gateway:
+      metrics:
+        enabled: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
 ---
 spring:
   config:
     import: classpath:aws-properties.yml
     activate:
       on-profile: local
-  client:
-    authUrl: http://localhost:8080
-    smartAdminUrl: http://localhost:8081
-    lrcAppUrl: http://localhost:8082
-    cpcAppUrl: http://localhost:8083
 logging:
-  level:
-    root: ${api.logging.level.root:DEBUG}
+  config: classpath:logback-spring-${spring.profiles.active}.xml
+sites:
+  auth-url: http://localhost:8080
+  smart-admin-url: http://localhost:8081
+  smart-admin-lrc-url: http://localhost:8082
+  smart-admin-cpc-url: http://localhost:8083
+  lrc-app-url: http://localhost:8084
+  cpc-app-url: http://localhost:8085
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
 ---
 spring:
   config:
     import: classpath:aws-properties-dev.yml
     activate:
       on-profile: dev
-  client:
-    authUrl: http://localhost:8080
-    smartAdminUrl: http://localhost:8081
-    lrcAppUrl: http://localhost:8082
-    cpcAppUrl: http://localhost:8083
+logging:
+  config: classpath:logback-spring-${spring.profiles.active}.xml
+sites:
+  auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
+  smart-admin-url: http://k8s-systemsd-systemsm-3411cecba4-a185780c02b3ce0f.elb.ap-northeast-2.amazonaws.com
+  smart-admin-lrc-url: http://k8s-systemsd-lrcmngap-6f8cba9e8e-5345f9a61df958fe.elb.ap-northeast-2.amazonaws.com
+  smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
+  lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
+  cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
+---
+spring:
+  config:
+    activate:
+      on-profile: eks-dev
+logging:
+  config: classpath:logback-spring-dev.xml
+sites:
+  auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
+  smart-admin-url: http://k8s-systemsd-systemsm-3411cecba4-a185780c02b3ce0f.elb.ap-northeast-2.amazonaws.com
+  smart-admin-lrc-url: http://k8s-systemsd-lrcmngap-6f8cba9e8e-5345f9a61df958fe.elb.ap-northeast-2.amazonaws.com
+  smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
+  lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
+  cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
 ---
 spring:
   config:
     import: classpath:aws-properties-dev.yml
     activate:
       on-profile: prod
-  client:
-    authUrl: http://localhost:8080
-    smartAdminUrl: http://localhost:8081
-    lrcAppUrl: http://localhost:8082
-    cpcAppUrl: http://localhost:8083
+logging:
+  config: classpath:logback-spring-${spring.profiles.active}.xml
+sites:
+  auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
+  smart-admin-url: http://k8s-systemsd-systemsm-3411cecba4-a185780c02b3ce0f.elb.ap-northeast-2.amazonaws.com
+  smart-admin-lrc-url: http://k8s-systemsd-lrcmngap-6f8cba9e8e-5345f9a61df958fe.elb.ap-northeast-2.amazonaws.com
+  smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
+  lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
+  cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
 ---
 # Spring cloud gateway setup
 #spring:
