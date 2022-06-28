@@ -52,6 +52,7 @@ sites:
 ---
 spring:
   config:
+    import: classpath:aws-properties-eks-dev.yml
     activate:
       on-profile: eks-dev
 logging:
