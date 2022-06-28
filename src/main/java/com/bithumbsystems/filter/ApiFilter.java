@@ -91,7 +91,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             log.info("ApiFilter called...");
             log.info("ApiFilter baseMessage: {}", config.getBaseMessage());
 
-            if (config.isPreLooger()) {
+            if (config.isPreLogger()) {
                 log.info("ApiFilter Start: {}", exchange.getRequest());
             }
 
