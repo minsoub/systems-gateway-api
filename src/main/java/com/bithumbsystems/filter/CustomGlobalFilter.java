@@ -6,7 +6,6 @@ import com.bithumbsystems.model.request.AuditLogRequest;
 import com.bithumbsystems.utils.CommonUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
@@ -84,7 +83,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
   }
 
   private AuditLogRequest getAuditLogRequest(HttpHeaders httpHeaders,
-      ServerHttpRequest serverHttpRequest) throws UnsupportedEncodingException {
+      ServerHttpRequest serverHttpRequest) {
     String userIp = httpHeaders.get(GlobalConstant.USER_IP) != null ?
         Objects.requireNonNull(httpHeaders.get(GlobalConstant.USER_IP)).get(0) : CommonUtil.getUserIp(serverHttpRequest);
 
@@ -96,8 +95,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         .siteId(Objects.requireNonNull(httpHeaders.get(GlobalConstant.SITE_ID)).get(0))
         .token(token)
         .path(String.valueOf(serverHttpRequest.getPath()))
-        .uri(URLEncoder.encode(String.valueOf(serverHttpRequest.getURI()),
-            StandardCharsets.UTF_8.name()))
+        .queryParams(URLEncoder.encode(String.valueOf(serverHttpRequest.getQueryParams()), StandardCharsets.UTF_8))
+        .uri(URLEncoder.encode(String.valueOf(serverHttpRequest.getURI()), StandardCharsets.UTF_8))
         .path(String.valueOf(serverHttpRequest.getPath()))
         .method(String.valueOf(serverHttpRequest.getMethod()))
         .referer(String.valueOf(httpHeaders.get("referer")))
