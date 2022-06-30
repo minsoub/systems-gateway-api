@@ -39,8 +39,8 @@ public class LocalParameterStoreConfig {
                 .build();
 
         // KMS Parameter Key
-        this.awsProperties.setKmsKey(getParameterValue(awsProperties.getParamStoreKmsName(), KMS_ALIAS_NAME));
-        this.awsProperties.setSqlUrl(getParameterValue(awsProperties.getParamStoreMessageName(), SQS_URL));
+        this.awsProperties.setKmsKey(getParameterValue(awsProperties.getParamStoreKmsName().trim(), KMS_ALIAS_NAME));
+        this.awsProperties.setSqlUrl(getParameterValue(awsProperties.getParamStoreMessageName().trim(), SQS_URL));
     }
 
     protected String getParameterValue(String storeName, String type) {

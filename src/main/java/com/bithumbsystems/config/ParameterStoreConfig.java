@@ -38,8 +38,8 @@ public class ParameterStoreConfig {
             .build();
 
         // KMS Parameter Key
-        this.awsProperties.setKmsKey(getParameterValue(awsProperties.getParamStoreKmsName(), GlobalConstant.KMS_ALIAS_NAME));
-        this.awsProperties.setSqlUrl(getParameterValue(awsProperties.getParamStoreMessageName(), SQS_URL));
+        this.awsProperties.setKmsKey(getParameterValue(awsProperties.getParamStoreKmsName().trim(), GlobalConstant.KMS_ALIAS_NAME));
+        this.awsProperties.setSqlUrl(getParameterValue(awsProperties.getParamStoreMessageName().trim(), SQS_URL));
     }
 
     protected String getParameterValue(String storeName, String type) {
