@@ -10,6 +10,8 @@ import com.bithumbsystems.utils.CommonUtil;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -138,7 +140,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                 replaceUrl += "?"+exchange.getRequest().getURI().getQuery();
             }
             log.debug("replaceUrl:"+ replaceUrl);
-            URI uri = URI.create(replaceUrl);
+            URI uri = URI.create(URLEncoder.encode(replaceUrl, StandardCharsets.UTF_8));
             ServerHttpRequest serverHttpRequest = exchange.getRequest().mutate()
                     .headers(httpHeaders -> {
                         httpHeaders.add("user_ip", user_ip);
