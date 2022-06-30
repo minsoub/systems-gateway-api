@@ -144,7 +144,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                     })
                     .uri(uri)
                     .build();
-
+            log.debug(">>> tokenIgnoreLrc:", tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath()));
             if (site_id.equals(GlobalConstant.CPC_SITE_ID)) {   // 투자보호 센터 : No Token
                 log.debug("cpc_site_id ");
                 return chain.filter(exchange.mutate().request(serverHttpRequest).build()).then(Mono.fromRunnable(() -> {
@@ -157,7 +157,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             }else if (site_id.equals(GlobalConstant.LRC_SITE_ID)
                     && (tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath()) || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/join/valid") == 0)
             ){
-                log.debug("lrc ignore path:"+ exchange.getRequest().getURI().getPath());
+                log.debug("lrc token ignore path:"+ exchange.getRequest().getURI().getPath());
                 return chain.filter(exchange.mutate().request(serverHttpRequest).build()).then(Mono.fromRunnable(() -> {
                     if (config.isPostLogger()) {
                         log.info("ApiFilter End: {}", exchange.getResponse());
