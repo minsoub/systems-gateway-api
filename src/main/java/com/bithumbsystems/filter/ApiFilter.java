@@ -10,8 +10,9 @@ import com.bithumbsystems.utils.CommonUtil;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -33,10 +34,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
-
-import java.net.URI;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Component
@@ -132,15 +129,15 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             log.debug(exchange.getRequest().getURI().toString());
             log.debug(exchange.getRequest().getURI().getHost());
             log.debug(exchange.getRequest().getURI().getPath());
-            log.debug(exchange.getRequest().getURI().getQuery()); //  .getQueryParams().toString());
+            log.debug(exchange.getRequest().getURI().getRawQuery()); //  .getQueryParams().toString());
             log.debug(exchange.getRequest().getURI().getRawPath());
 
             String replaceUrl = goUrl.get() + exchange.getRequest().getURI().getPath();
             if (StringUtils.hasLength(exchange.getRequest().getURI().getQuery())) {
-                replaceUrl += "?"+exchange.getRequest().getURI().getQuery();
+                replaceUrl += "?"+exchange.getRequest().getURI().getRawQuery();
             }
             log.debug("replaceUrl:"+ replaceUrl);
-            URI uri = URI.create(URLEncoder.encode(replaceUrl, StandardCharsets.UTF_8));
+            URI uri = URI.create(replaceUrl);
             ServerHttpRequest serverHttpRequest = exchange.getRequest().mutate()
                     .headers(httpHeaders -> {
                         httpHeaders.add("user_ip", user_ip);
