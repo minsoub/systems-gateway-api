@@ -93,8 +93,12 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     String siteId = httpHeaders.get(GlobalConstant.SITE_ID) != null ?
         Objects.requireNonNull(httpHeaders.get(GlobalConstant.SITE_ID)).get(0) : "";
 
+    String mySiteId = httpHeaders.get(GlobalConstant.MY_SITE_ID) != null ?
+        Objects.requireNonNull(httpHeaders.get(GlobalConstant.MY_SITE_ID)).get(0) : "";
+
     return AuditLogRequest.builder()
         .userIp(userIp)
+        .mySiteId(mySiteId)
         .siteId(siteId)
         .token(token)
         .path(String.valueOf(serverHttpRequest.getPath()))

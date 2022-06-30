@@ -13,6 +13,7 @@ public class AuditLogRequest {
 
   private String userIp;
   private String siteId;
+  private String mySiteId;
   private String token;
   private String uri;
   private String path;
