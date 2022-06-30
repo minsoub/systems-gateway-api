@@ -102,8 +102,10 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         .uri(URLEncoder.encode(String.valueOf(serverHttpRequest.getURI()), StandardCharsets.UTF_8))
         .path(String.valueOf(serverHttpRequest.getPath()))
         .method(String.valueOf(serverHttpRequest.getMethod()))
-        .referer(String.valueOf(httpHeaders.get("referer")))
-        .userAgent(String.valueOf(httpHeaders.get("User-Agent")))
+        .referer(String.valueOf(httpHeaders.get("referer") == null ?  "" : Objects.requireNonNull(
+            httpHeaders.get("referer")).get(0)))
+        .userAgent(String.valueOf(httpHeaders.get("User-Agent") == null ? "" : Objects.requireNonNull(
+            httpHeaders.get("User-Agent")).get(0)))
         .message(String.valueOf(httpHeaders))
         .build();
   }
