@@ -1,7 +1,6 @@
 package com.bithumbsystems.config;
 
 import com.bithumbsystems.config.properties.UrlProperties;
-import java.time.Duration;
 import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -38,16 +37,17 @@ public class WebClientConfig {
 //            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 //            .build();
 
-        ConnectionProvider provider = ConnectionProvider.builder("fixed")
-            .maxConnections(500)
-            .maxIdleTime(Duration.ofSeconds(10))
-            .maxLifeTime(Duration.ofSeconds(30))
-            .pendingAcquireTimeout(Duration.ofSeconds(30))
-            .lifo()
-            .evictInBackground(Duration.ofSeconds(40)).build();
+//        ConnectionProvider provider = ConnectionProvider.builder("fixed")
+//            .maxConnections(500)
+//            .maxIdleTime(Duration.ofSeconds(10))
+//            .maxLifeTime(Duration.ofSeconds(30))
+//            .pendingAcquireTimeout(Duration.ofSeconds(30))
+//            .lifo()
+//            .evictInBackground(Duration.ofSeconds(40)).build();
+
 
         return WebClient.builder()
-            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(ConnectionProvider.newConnection())))
             .build();
 
     }
