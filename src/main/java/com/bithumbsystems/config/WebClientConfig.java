@@ -40,10 +40,11 @@ public class WebClientConfig {
 
         ConnectionProvider provider = ConnectionProvider.builder("fixed")
             .maxConnections(500)
-            .maxIdleTime(Duration.ofSeconds(20))
-            .maxLifeTime(Duration.ofSeconds(60))
-            .pendingAcquireTimeout(Duration.ofSeconds(60))
-            .evictInBackground(Duration.ofSeconds(120)).build();
+            .maxIdleTime(Duration.ofSeconds(10))
+            .maxLifeTime(Duration.ofSeconds(30))
+            .pendingAcquireTimeout(Duration.ofSeconds(30))
+            .lifo()
+            .evictInBackground(Duration.ofSeconds(40)).build();
 
         return WebClient.builder()
             .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
