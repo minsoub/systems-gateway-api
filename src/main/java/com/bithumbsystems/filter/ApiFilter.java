@@ -1,5 +1,7 @@
 package com.bithumbsystems.filter;
 
+import static com.bithumbsystems.utils.CommonUtil.getWebClient;
+
 import com.bithumbsystems.config.Config;
 import com.bithumbsystems.config.constant.GlobalConstant;
 import com.bithumbsystems.exception.GatewayException;
@@ -8,7 +10,6 @@ import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.request.TokenRequest;
 import com.bithumbsystems.utils.CommonUtil;
 import java.net.URI;
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
@@ -20,17 +21,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
-import reactor.netty.resources.ConnectionProvider;
 
 @Slf4j
 @Component
@@ -49,43 +46,6 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
 
     public ApiFilter() {
         super(Config.class);
-    }
-
-    //@Bean
-    public static WebClient webClient()
-    {
-//        //log.debug("webclient auth url => {}", urlConfig.getAuthUrl());
-//        HttpClient httpClient = HttpClient.create()
-//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-//                .doOnConnected(
-//                        connection -> connection
-//                                .addHandlerLast(new ReadTimeoutHandler(10))
-//                                .addHandlerLast(new WriteTimeoutHandler(10))
-//                );
-//
-//        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-//        log.debug("auth url => {}", authUrl);  //urlConfig.getAuthUrl());
-//
-//        WebClient webClient = WebClient.builder()
-//                .baseUrl(authUrl)  // "http://localhost:8080")  //urlConfig.getAuthUrl())
-//                .clientConnector(connector)
-//                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-//                .build();
-//
-//        return webClient;
-
-        ConnectionProvider provider = ConnectionProvider.builder("fixed")
-            .maxConnections(500)
-            .maxIdleTime(Duration.ofSeconds(10))
-            .maxLifeTime(Duration.ofSeconds(30))
-            .pendingAcquireTimeout(Duration.ofSeconds(30))
-            .lifo()
-            .evictInBackground(Duration.ofSeconds(40)).build();
-
-
-        return WebClient.builder()
-            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
-            .build();
     }
 
     @Bean
@@ -108,28 +68,28 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             log.debug("validation check start");
             log.debug("header => {}", request.getHeaders());
             // 사용자 IP check
-            String user_ip = CommonUtil.getUserIp(request);
-            log.debug("user IP => {}", user_ip);
+            String userIp = CommonUtil.getUserIp(request);
+            log.debug("user IP => {}", userIp);
 
             // 사이트 코드 체크
             if (!request.getHeaders().containsKey(GlobalConstant.SITE_ID)) {
                 throw new GatewayException(ErrorCode.INVALID_HEADER_SITE_ID);
             }
             // 사이트 코드에 따른 Authorization check
-            String site_id = request.getHeaders().getFirst(GlobalConstant.SITE_ID).toString();
-            if (!StringUtils.hasLength(site_id)) {
+            String siteId = request.getHeaders().getFirst(GlobalConstant.SITE_ID).toString();
+            if (!StringUtils.hasLength(siteId)) {
                 throw new GatewayException(ErrorCode.INVALID_HEADER_SITE_ID);
             }
-            log.debug("site_id => {}", site_id);
+            log.debug("site_id => {}", siteId);
             String url = null;
 
             log.debug("properties url [lrc : {}, cp : {}, mng : {}", lrcAppUrl, cpcAppUrl, smartAdminUrl);
             log.debug("tt : {}", authUrl);  // urlConfig.getAuthUrl());
 
             // Redirect URI
-            if (site_id.equals(GlobalConstant.LRC_SITE_ID)) {
+            if (siteId.equals(GlobalConstant.LRC_SITE_ID)) {
                 goUrl.set(lrcAppUrl);
-            }else if(site_id.equals(GlobalConstant.CPC_SITE_ID)) {
+            }else if(siteId.equals(GlobalConstant.CPC_SITE_ID)) {
                 goUrl.set(cpcAppUrl);
             }else {
                 goUrl.set(smartAdminUrl);
@@ -150,12 +110,13 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             URI uri = URI.create(replaceUrl);
             ServerHttpRequest serverHttpRequest = exchange.getRequest().mutate()
                     .headers(httpHeaders -> {
-                        httpHeaders.add("user_ip", user_ip);
+                        httpHeaders.add("user_ip", userIp);
                     })
                     .uri(uri)
                     .build();
             log.debug(">>> tokenIgnoreLrc:", tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath()));
-            if (site_id.equals(GlobalConstant.CPC_SITE_ID)) {   // 투자보호 센터 : No Token
+
+            if (siteId.equals(GlobalConstant.CPC_SITE_ID)) {   // 투자보호 센터 : No Token
                 log.debug("cpc_site_id ");
                 return chain.filter(exchange.mutate().request(serverHttpRequest).build()).then(Mono.fromRunnable(() -> {
                     if (config.isPostLogger()) {
@@ -164,7 +125,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                 }));
 
                 //return chain.filter(exchange);
-            }else if (site_id.equals(GlobalConstant.LRC_SITE_ID)
+            }else if (siteId.equals(GlobalConstant.LRC_SITE_ID)
                     && (tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath()) || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/join/valid") == 0)
             ){
                 log.debug("lrc token ignore path:"+ exchange.getRequest().getURI().getPath());
@@ -185,14 +146,14 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                 log.debug("token => {}", token);
                 // Token 검증
                 TokenRequest req = TokenRequest.builder()
-                        .site_id(site_id)
-                        .user_ip(user_ip)
+                        .site_id(siteId)
+                        .user_ip(userIp)
                         .token(token)
                         .build();
 
                 log.debug("token data => {}", req);
 
-                return webClient().mutate().build()
+                return getWebClient(authUrl).mutate().build()
                         .method(HttpMethod.POST)
                         //.headers { it.addAll(headers) }
                         .uri("/api/v1/authorize")

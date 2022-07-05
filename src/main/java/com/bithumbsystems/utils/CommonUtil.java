@@ -1,7 +1,12 @@
 package com.bithumbsystems.utils;
 
+import java.time.Duration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.StringUtils;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 public class CommonUtil {
 
@@ -33,5 +38,21 @@ public class CommonUtil {
         }
 
         return ip;
+    }
+
+    public static WebClient getWebClient(String url)
+    {
+        ConnectionProvider provider = ConnectionProvider.builder("fixed")
+            .maxConnections(500)
+            .maxIdleTime(Duration.ofSeconds(10))
+            .maxLifeTime(Duration.ofSeconds(30))
+            .pendingAcquireTimeout(Duration.ofSeconds(30))
+            .lifo()
+            .evictInBackground(Duration.ofSeconds(40)).build();
+
+        return WebClient.builder()
+            .baseUrl(url)
+            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+            .build();
     }
 }
