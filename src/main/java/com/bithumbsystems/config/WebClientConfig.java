@@ -1,22 +1,17 @@
 package com.bithumbsystems.config;
 
 import com.bithumbsystems.config.properties.UrlProperties;
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
+import java.time.Duration;
+import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
-
-import javax.annotation.PreDestroy;
+import reactor.netty.resources.ConnectionProvider;
 
 @Slf4j
 @Getter
@@ -29,19 +24,31 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient()
     {
-        HttpClient httpClient = HttpClient.create()
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-            .doOnConnected(conn -> conn
-                .addHandlerLast(new ReadTimeoutHandler(10))
-                .addHandlerLast(new WriteTimeoutHandler(10)));
+//        HttpClient httpClient = HttpClient.create()
+//            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+//            .option(ChannelOption.SO_KEEPALIVE, true)
+//            .doOnConnected(conn -> conn
+//                .addHandlerLast(new ReadTimeoutHandler(10))
+//                .addHandlerLast(new WriteTimeoutHandler(10)));
+//        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
 
-        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+//        return WebClient.builder()
+//            .baseUrl(urlProperties.getAuthUrl())
+//            .clientConnector(connector)
+//            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+//            .build();
+
+        ConnectionProvider provider = ConnectionProvider.builder("fixed")
+            .maxConnections(500)
+            .maxIdleTime(Duration.ofSeconds(20))
+            .maxLifeTime(Duration.ofSeconds(60))
+            .pendingAcquireTimeout(Duration.ofSeconds(60))
+            .evictInBackground(Duration.ofSeconds(120)).build();
 
         return WebClient.builder()
-                .baseUrl(urlProperties.getAuthUrl())
-                .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+            .build();
+
     }
 
     @PreDestroy
