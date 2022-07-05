@@ -7,10 +7,8 @@ import com.bithumbsystems.exception.GatewayExceptionHandler;
 import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.request.TokenRequest;
 import com.bithumbsystems.utils.CommonUtil;
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +17,9 @@ import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -34,6 +30,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 @Slf4j
 @Component
@@ -55,27 +52,40 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     }
 
     //@Bean
-    public WebClient webClient()
+    public static WebClient webClient()
     {
-        //log.debug("webclient auth url => {}", urlConfig.getAuthUrl());
-        HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .doOnConnected(
-                        connection -> connection
-                                .addHandlerLast(new ReadTimeoutHandler(10))
-                                .addHandlerLast(new WriteTimeoutHandler(10))
-                );
+//        //log.debug("webclient auth url => {}", urlConfig.getAuthUrl());
+//        HttpClient httpClient = HttpClient.create()
+//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+//                .doOnConnected(
+//                        connection -> connection
+//                                .addHandlerLast(new ReadTimeoutHandler(10))
+//                                .addHandlerLast(new WriteTimeoutHandler(10))
+//                );
+//
+//        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+//        log.debug("auth url => {}", authUrl);  //urlConfig.getAuthUrl());
+//
+//        WebClient webClient = WebClient.builder()
+//                .baseUrl(authUrl)  // "http://localhost:8080")  //urlConfig.getAuthUrl())
+//                .clientConnector(connector)
+//                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+//                .build();
+//
+//        return webClient;
 
-        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-        log.debug("auth url => {}", authUrl);  //urlConfig.getAuthUrl());
+        ConnectionProvider provider = ConnectionProvider.builder("fixed")
+            .maxConnections(500)
+            .maxIdleTime(Duration.ofSeconds(10))
+            .maxLifeTime(Duration.ofSeconds(30))
+            .pendingAcquireTimeout(Duration.ofSeconds(30))
+            .lifo()
+            .evictInBackground(Duration.ofSeconds(40)).build();
 
-        WebClient webClient = WebClient.builder()
-                .baseUrl(authUrl)  // "http://localhost:8080")  //urlConfig.getAuthUrl())
-                .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
 
-        return webClient;
+        return WebClient.builder()
+            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+            .build();
     }
 
     @Bean
