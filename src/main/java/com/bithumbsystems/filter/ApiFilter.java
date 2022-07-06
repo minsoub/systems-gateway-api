@@ -1,7 +1,5 @@
 package com.bithumbsystems.filter;
 
-import static com.bithumbsystems.utils.CommonUtil.getWebClient;
-
 import com.bithumbsystems.config.Config;
 import com.bithumbsystems.config.constant.GlobalConstant;
 import com.bithumbsystems.exception.GatewayException;
@@ -10,6 +8,7 @@ import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.request.TokenRequest;
 import com.bithumbsystems.utils.CommonUtil;
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +20,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 @Slf4j
 @Component
@@ -51,6 +54,21 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     @Bean
     public ErrorWebExceptionHandler exceptionHandler() {
         return new GatewayExceptionHandler();
+    }
+
+    public WebClient getWebClient(String url)
+    {
+        ConnectionProvider provider = ConnectionProvider.builder("fixed")
+            .maxIdleTime(Duration.ofSeconds(10))
+            .maxLifeTime(Duration.ofSeconds(30))
+            .pendingAcquireTimeout(Duration.ofSeconds(30))
+            .lifo()
+            .evictInBackground(Duration.ofSeconds(60)).build();
+
+        return WebClient.builder()
+            .baseUrl(url)
+            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+            .build();
     }
 
     @Override
