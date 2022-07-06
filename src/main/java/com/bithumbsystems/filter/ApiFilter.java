@@ -73,11 +73,18 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
 
             // 사이트 코드 체크
             if (!request.getHeaders().containsKey(GlobalConstant.SITE_ID)) {
+                log.debug(">>>>> SITE ID NOT CONTAINS <<<<<");
+                log.debug(">>>>>HEADER => {}", request.getHeaders());
+                log.debug(">>>>>URI => {}", request.getURI());
                 throw new GatewayException(ErrorCode.INVALID_HEADER_SITE_ID);
             }
             // 사이트 코드에 따른 Authorization check
             String siteId = request.getHeaders().getFirst(GlobalConstant.SITE_ID).toString();
             if (!StringUtils.hasLength(siteId)) {
+                log.debug(">>>>> SITE ID NOT FOUND <<<<<");
+                log.debug(">>>>> header => {}", request.getHeaders());
+                log.debug(">>>>> URI => {}", request.getURI());
+                log.debug(">>>>> siteId => {}", siteId);
                 throw new GatewayException(ErrorCode.INVALID_HEADER_SITE_ID);
             }
             log.debug("site_id => {}", siteId);
