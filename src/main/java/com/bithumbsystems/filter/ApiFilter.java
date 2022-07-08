@@ -59,11 +59,10 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     public WebClient getWebClient(String url)
     {
         ConnectionProvider provider = ConnectionProvider.builder("fixed")
-            .maxIdleTime(Duration.ofSeconds(10))
-            .maxLifeTime(Duration.ofSeconds(30))
-            .pendingAcquireTimeout(Duration.ofSeconds(30))
-            .lifo()
-            .evictInBackground(Duration.ofSeconds(60)).build();
+            .maxIdleTime(Duration.ofSeconds(30))
+            .maxLifeTime(Duration.ofSeconds(60))
+            .pendingAcquireTimeout(Duration.ofSeconds(60))
+            .evictInBackground(Duration.ofSeconds(120)).build();
 
         return WebClient.builder()
             .baseUrl(url)
