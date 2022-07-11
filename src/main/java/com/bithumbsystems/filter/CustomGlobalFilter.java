@@ -1,5 +1,6 @@
 package com.bithumbsystems.filter;
 
+import com.amazonaws.services.sqs.model.InvalidMessageContentsException;
 import com.bithumbsystems.config.constant.GlobalConstant;
 import com.bithumbsystems.filter.sender.AwsSQSSender;
 import com.bithumbsystems.model.request.AuditLogRequest;
@@ -10,7 +11,6 @@ import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -42,50 +42,58 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     return -1;
   }
 
-  @SneakyThrows
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     log.debug("GlobalFilter START: {}", exchange.getResponse());
     log.debug("GlobalFilter Thread: {}", Thread.currentThread().getName());
-    ServerHttpRequest serverHttpRequest = exchange.getRequest();
-    HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
-    if (serverHttpRequest.getMethod() == HttpMethod.GET) {
-      AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
-      log.debug(auditRequest.toString());
-      sqsSender.sendMessage(auditRequest, auditRequest.getPath());
+    return Mono.defer(() -> {
+      ServerHttpRequest serverHttpRequest = exchange.getRequest();
+      HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
+      if (serverHttpRequest.getMethod() == HttpMethod.GET) {
+        AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
+        log.debug(auditRequest.toString());
+        sqsSender.sendMessage(auditRequest, auditRequest.getPath());
+        return chain.filter(exchange.mutate().build());
+      } else {
+        ServerHttpRequestDecorator loggingServerHttpRequestDecorator = new ServerHttpRequestDecorator(
+            exchange.getRequest()) {
+
+          @Override
+          public Flux<DataBuffer> getBody() {
+            return super.getBody().publishOn(Schedulers.boundedElastic()).doOnNext(dataBuffer -> {
+              try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                Channels.newChannel(byteArrayOutputStream)
+                    .write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
+                var requestBody = IOUtils.toString(byteArrayOutputStream.toByteArray(),
+                    StandardCharsets.UTF_8.name());
+
+                AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
+                auditRequest.setRequestBody(requestBody);
+                log.debug(auditRequest.toString());
+                sqsSender.sendMessage(auditRequest, auditRequest.getPath());
+              } catch (IOException e) {
+                log.error(e.getLocalizedMessage());
+              } catch (InvalidMessageContentsException e) {
+                log.warn("InvalidMessageContentsException: {}", e.getLocalizedMessage());
+                AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
+                sqsSender.sendMessage(auditRequest, auditRequest.getPath());
+              }
+            });
+          }
+        };
+        return chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build());
+      }
+    }).onErrorResume(error -> {
+      log.debug("CustomGlobalFilter error => {}", error.getMessage());
       return chain.filter(exchange.mutate().build());
-    } else {
-      ServerHttpRequestDecorator loggingServerHttpRequestDecorator = new ServerHttpRequestDecorator(
-          exchange.getRequest()) {
-        String requestBody = "";
-
-        @Override
-        public Flux<DataBuffer> getBody() {
-          return super.getBody().publishOn(Schedulers.boundedElastic()).doOnNext(dataBuffer -> {
-            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-              Channels.newChannel(byteArrayOutputStream)
-                  .write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
-              requestBody = IOUtils.toString(byteArrayOutputStream.toByteArray(),
-                  StandardCharsets.UTF_8.name());
-
-              AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
-              auditRequest.setRequestBody(requestBody);
-              log.debug(auditRequest.toString());
-              sqsSender.sendMessage(auditRequest, auditRequest.getPath());
-            } catch (IOException e) {
-              log.error(e.getLocalizedMessage());
-            }
-          });
-        }
-      };
-      return chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build());
-    }
+    });
   }
 
   private AuditLogRequest getAuditLogRequest(HttpHeaders httpHeaders,
       ServerHttpRequest serverHttpRequest) {
     String userIp = httpHeaders.get(GlobalConstant.USER_IP) != null ?
-        Objects.requireNonNull(httpHeaders.get(GlobalConstant.USER_IP)).get(0) : CommonUtil.getUserIp(serverHttpRequest);
+        Objects.requireNonNull(httpHeaders.get(GlobalConstant.USER_IP)).get(0)
+        : CommonUtil.getUserIp(serverHttpRequest);
 
     String token = httpHeaders.get(GlobalConstant.TOKEN_HEADER) != null ?
         Objects.requireNonNull(httpHeaders.get(GlobalConstant.TOKEN_HEADER)).get(0) : "";
@@ -102,15 +110,18 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         .siteId(siteId)
         .token(token)
         .path(String.valueOf(serverHttpRequest.getPath()))
-        .queryParams(URLEncoder.encode(String.valueOf(serverHttpRequest.getQueryParams()), StandardCharsets.UTF_8))
+        .queryParams(URLEncoder.encode(String.valueOf(serverHttpRequest.getQueryParams()),
+            StandardCharsets.UTF_8))
         .uri(URLEncoder.encode(String.valueOf(serverHttpRequest.getURI()), StandardCharsets.UTF_8))
         .path(String.valueOf(serverHttpRequest.getPath()))
         .method(String.valueOf(serverHttpRequest.getMethod()))
-        .referer(String.valueOf(httpHeaders.get("referer") == null ?  "" : Objects.requireNonNull(
+        .referer(String.valueOf(httpHeaders.get("referer") == null ? "" : Objects.requireNonNull(
             httpHeaders.get("referer")).get(0)))
-        .userAgent(String.valueOf(httpHeaders.get("User-Agent") == null ? "" : Objects.requireNonNull(
-            httpHeaders.get("User-Agent")).get(0)))
+        .userAgent(
+            String.valueOf(httpHeaders.get("User-Agent") == null ? "" : Objects.requireNonNull(
+                httpHeaders.get("User-Agent")).get(0)))
         .message(String.valueOf(httpHeaders))
         .build();
   }
 }
+

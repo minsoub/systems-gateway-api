@@ -7,6 +7,10 @@ import com.bithumbsystems.exception.GatewayExceptionHandler;
 import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.request.TokenRequest;
 import com.bithumbsystems.utils.CommonUtil;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
@@ -64,9 +68,20 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             .pendingAcquireTimeout(Duration.ofSeconds(60))
             .evictInBackground(Duration.ofSeconds(120)).build();
 
+        HttpClient httpClient = HttpClient.create(provider)
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
+            .option(ChannelOption.SO_KEEPALIVE, true)
+            .option(EpollChannelOption.TCP_KEEPIDLE, 300)
+            .option(EpollChannelOption.TCP_KEEPINTVL, 60)
+            .option(EpollChannelOption.TCP_KEEPCNT, 8)
+            .doOnConnected(
+                conn -> conn.addHandlerLast(new ReadTimeoutHandler(5))
+                    .addHandlerLast(new WriteTimeoutHandler(60))
+            );
+
         return WebClient.builder()
             .baseUrl(url)
-            .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
             .build();
     }
 
@@ -96,7 +111,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                 throw new GatewayException(ErrorCode.INVALID_HEADER_SITE_ID);
             }
             // 사이트 코드에 따른 Authorization check
-            String siteId = request.getHeaders().getFirst(GlobalConstant.SITE_ID).toString();
+            String siteId = request.getHeaders().getFirst(GlobalConstant.SITE_ID);
             if (!StringUtils.hasLength(siteId)) {
                 log.debug(">>>>> SITE ID NOT FOUND <<<<<");
                 log.debug(">>>>> header => {}", request.getHeaders());
@@ -105,7 +120,6 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                 throw new GatewayException(ErrorCode.INVALID_HEADER_SITE_ID);
             }
             log.debug("site_id => {}", siteId);
-            String url = null;
 
             log.debug("properties url [lrc : {}, cp : {}, mng : {}", lrcAppUrl, cpcAppUrl, smartAdminUrl);
             log.debug("tt : {}", authUrl);  // urlConfig.getAuthUrl());
