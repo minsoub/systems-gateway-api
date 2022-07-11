@@ -46,48 +46,44 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     log.debug("GlobalFilter START: {}", exchange.getResponse());
     log.debug("GlobalFilter Thread: {}", Thread.currentThread().getName());
-    return Mono.defer(() -> {
-      ServerHttpRequest serverHttpRequest = exchange.getRequest();
-      HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
-      if (serverHttpRequest.getMethod() == HttpMethod.GET) {
-        AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
-        log.debug(auditRequest.toString());
-        sqsSender.sendMessage(auditRequest, auditRequest.getPath());
-        return chain.filter(exchange.mutate().build());
-      } else {
-        ServerHttpRequestDecorator loggingServerHttpRequestDecorator = new ServerHttpRequestDecorator(
-            exchange.getRequest()) {
-
-          @Override
-          public Flux<DataBuffer> getBody() {
-            return super.getBody().publishOn(Schedulers.boundedElastic()).doOnNext(dataBuffer -> {
-              try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                Channels.newChannel(byteArrayOutputStream)
-                    .write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
-                var requestBody = IOUtils.toString(byteArrayOutputStream.toByteArray(),
-                    StandardCharsets.UTF_8.name());
-
-                AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
-                auditRequest.setRequestBody(requestBody);
-                log.debug(auditRequest.toString());
-                sqsSender.sendMessage(auditRequest, auditRequest.getPath());
-              } catch (IOException e) {
-                log.error(e.getLocalizedMessage());
-              } catch (InvalidMessageContentsException e) {
-                log.warn("InvalidMessageContentsException: {}", e.getLocalizedMessage());
-                AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
-                sqsSender.sendMessage(auditRequest, auditRequest.getPath());
-              }
-            });
-          }
-        };
-        return chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build());
-      }
-    }).onErrorResume(error -> {
-      log.debug("CustomGlobalFilter error => {}", error.getMessage());
+    ServerHttpRequest serverHttpRequest = exchange.getRequest();
+    HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
+    if (serverHttpRequest.getMethod() == HttpMethod.GET) {
+      AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
+      log.debug(auditRequest.toString());
+      sqsSender.sendMessage(auditRequest, auditRequest.getPath());
       return chain.filter(exchange.mutate().build());
-    });
+    } else {
+      ServerHttpRequestDecorator loggingServerHttpRequestDecorator = new ServerHttpRequestDecorator(
+          exchange.getRequest()) {
+
+        @Override
+        public Flux<DataBuffer> getBody() {
+          return super.getBody().publishOn(Schedulers.boundedElastic()).doOnNext(dataBuffer -> {
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+              Channels.newChannel(byteArrayOutputStream)
+                  .write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
+              var requestBody = IOUtils.toString(byteArrayOutputStream.toByteArray(),
+                  StandardCharsets.UTF_8.name());
+
+              AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
+              auditRequest.setRequestBody(requestBody);
+              log.debug(auditRequest.toString());
+              sqsSender.sendMessage(auditRequest, auditRequest.getPath());
+            } catch (IOException e) {
+              log.error(e.getLocalizedMessage());
+            } catch (InvalidMessageContentsException e) {
+              log.warn("InvalidMessageContentsException: {}", e.getLocalizedMessage());
+              AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
+              sqsSender.sendMessage(auditRequest, auditRequest.getPath());
+            }
+          });
+        }
+      };
+      return chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build());
+    }
   }
+
 
   private AuditLogRequest getAuditLogRequest(HttpHeaders httpHeaders,
       ServerHttpRequest serverHttpRequest) {
