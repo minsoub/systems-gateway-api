@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -49,6 +50,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     return Mono.defer(() -> {
       ServerHttpRequest serverHttpRequest = exchange.getRequest();
       HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
+
       if (serverHttpRequest.getMethod() == HttpMethod.GET) {
         AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
         log.debug(auditRequest.toString());
@@ -62,7 +64,6 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
           @Override
           public Flux<DataBuffer> getBody() {
             return super.getBody()
-                .publishOn(Schedulers.parallel())
                 .publishOn(Schedulers.boundedElastic())
                 .doOnNext(dataBuffer -> {
                   try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
@@ -86,7 +87,10 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                 });
           }
         };
-        return chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build());
+        return exchange.getMultipartData()
+            .filter(Map::isEmpty)
+            .then(chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build()))
+            .switchIfEmpty(chain.filter(exchange.mutate().build()));
       }
     }).onErrorResume(error -> {
       log.debug("CustomGlobalFilter error => {}", error.getMessage());
