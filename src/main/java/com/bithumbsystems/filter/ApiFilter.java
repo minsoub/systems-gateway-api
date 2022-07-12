@@ -14,6 +14,7 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,8 +76,8 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             .option(EpollChannelOption.TCP_KEEPINTVL, 60)
             .option(EpollChannelOption.TCP_KEEPCNT, 8)
             .doOnConnected(
-                conn -> conn.addHandlerLast(new ReadTimeoutHandler(5))
-                    .addHandlerLast(new WriteTimeoutHandler(60))
+                conn -> conn.addHandlerLast(new ReadTimeoutHandler(10, TimeUnit.SECONDS))
+                    .addHandlerLast(new WriteTimeoutHandler(60, TimeUnit.SECONDS))
             );
 
         return WebClient.builder()
