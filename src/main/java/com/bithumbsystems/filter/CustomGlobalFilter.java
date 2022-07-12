@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -20,6 +19,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
@@ -50,8 +50,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     return Mono.defer(() -> {
       ServerHttpRequest serverHttpRequest = exchange.getRequest();
       HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
-
-      if (serverHttpRequest.getMethod() == HttpMethod.GET) {
+      if (serverHttpRequest.getMethod() == HttpMethod.GET || exchange.getRequest().getHeaders().getContentType() == MediaType.MULTIPART_FORM_DATA) {
         AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
         log.debug(auditRequest.toString());
         sqsSender.sendMessage(auditRequest, auditRequest.getPath());
@@ -87,10 +86,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                 });
           }
         };
-        return exchange.getMultipartData()
-            .filter(Map::isEmpty)
-            .then(chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build()))
-            .switchIfEmpty(chain.filter(exchange.mutate().build()));
+        return chain.filter(exchange.mutate().request(loggingServerHttpRequestDecorator).build());
       }
     }).onErrorResume(error -> {
       log.debug("CustomGlobalFilter error => {}", error.getMessage());
