@@ -64,21 +64,19 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     public WebClient getWebClient(String url)
     {
         ConnectionProvider provider = ConnectionProvider.builder("fixed")
-            .maxIdleTime(Duration.ofSeconds(30))
-            .maxLifeTime(Duration.ofSeconds(60))
-            .pendingAcquireTimeout(Duration.ofSeconds(60))
-            .evictInBackground(Duration.ofSeconds(120)).build();
+            .maxConnections(500)
+            .maxIdleTime(Duration.ofSeconds(600))
+            .pendingAcquireTimeout(Duration.ofSeconds(45)).build();
 
         HttpClient httpClient = HttpClient.create(provider)
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
             .option(ChannelOption.SO_KEEPALIVE, true)
-            .option(EpollChannelOption.TCP_KEEPIDLE, 300)
-            .option(EpollChannelOption.TCP_KEEPINTVL, 60)
-            .option(EpollChannelOption.TCP_KEEPCNT, 8)
+            .option(EpollChannelOption.TCP_KEEPIDLE, 600)
+            .option(EpollChannelOption.TCP_KEEPINTVL, 45)
             .doOnConnected(
                 conn -> conn.addHandlerLast(new ReadTimeoutHandler(10, TimeUnit.SECONDS))
                     .addHandlerLast(new WriteTimeoutHandler(60, TimeUnit.SECONDS))
-            );
+            ).compress(true);
 
         return WebClient.builder()
             .baseUrl(url)
