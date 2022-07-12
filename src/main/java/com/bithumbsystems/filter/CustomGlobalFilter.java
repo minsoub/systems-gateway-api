@@ -62,6 +62,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
           @Override
           public Flux<DataBuffer> getBody() {
             return super.getBody()
+                .publishOn(Schedulers.parallel())
                 .publishOn(Schedulers.boundedElastic())
                 .doOnNext(dataBuffer -> {
                   try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
