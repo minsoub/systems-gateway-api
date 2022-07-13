@@ -64,17 +64,15 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     {
         ConnectionProvider provider = ConnectionProvider.builder("fixed")
             .maxIdleTime(Duration.ofSeconds(20))
-            .maxLifeTime(Duration.ofSeconds(60))
+            .maxLifeTime(Duration.ofSeconds(600))
             .pendingAcquireTimeout(Duration.ofSeconds(60))
-            .evictInBackground(Duration.ofSeconds(120))
-            .metrics(true)
-            .build();
+            .evictInBackground(Duration.ofSeconds(120)).build();
 
         HttpClient httpClient = HttpClient.create(provider)
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 100000000)
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 120000)
             .doOnConnected(
-                conn -> conn.addHandlerLast(new ReadTimeoutHandler(10, TimeUnit.MINUTES))
-                    .addHandlerLast(new WriteTimeoutHandler(60, TimeUnit.MINUTES))
+                conn -> conn.addHandlerLast(new ReadTimeoutHandler(60, TimeUnit.SECONDS))
+                    .addHandlerLast(new WriteTimeoutHandler(120, TimeUnit.SECONDS))
             ).compress(true).wiretap(true);
 
         return WebClient.builder()
