@@ -1,6 +1,8 @@
 package com.bithumbsystems.filter;
 
 import com.bithumbsystems.config.Config;
+import com.bithumbsystems.exception.GatewayException;
+import com.bithumbsystems.model.enums.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -26,7 +28,10 @@ public class UserFilter extends AbstractGatewayFilterFactory<Config> {
 
             // Request Header 검증
 
-            return chain.filter(exchange).then(Mono.fromRunnable(()-> {
+            return chain.filter(exchange).doOnError(e -> {
+                log.error(e.getMessage());
+                throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
+                }).then(Mono.fromRunnable(()-> {
                 if (config.isPostLogger()) {
                     log.info("UserFilter End: {}", exchange.getResponse());
                 }

@@ -2,7 +2,9 @@ package com.bithumbsystems.filter;
 
 import com.amazonaws.services.sqs.model.InvalidMessageContentsException;
 import com.bithumbsystems.config.constant.GlobalConstant;
+import com.bithumbsystems.exception.GatewayException;
 import com.bithumbsystems.filter.sender.AwsSQSSender;
+import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.model.request.AuditLogRequest;
 import com.bithumbsystems.utils.CommonUtil;
 import java.io.ByteArrayOutputStream;
@@ -90,6 +92,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
       }
     }).onErrorResume(error -> {
       log.debug("CustomGlobalFilter error => {}", error.getMessage());
+      if(error.getMessage().equals(ErrorCode.SERVER_RESPONSE_ERROR.toString())) {
+        throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
+      }
       return chain.filter(exchange.mutate().build());
     });
   }
