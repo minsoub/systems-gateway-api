@@ -7,7 +7,6 @@ import com.bithumbsystems.exception.GatewayExceptionHandler;
 import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.request.TokenRequest;
 import com.bithumbsystems.utils.CommonUtil;
-import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import java.net.URI;
@@ -69,7 +68,6 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
         .evictInBackground(Duration.ofSeconds(120)).build();
 
     HttpClient httpClient = HttpClient.create(provider)
-        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30000)
         .doOnConnected(
             conn -> conn.addHandlerLast(new ReadTimeoutHandler(60, TimeUnit.SECONDS))
                 .addHandlerLast(new WriteTimeoutHandler(120, TimeUnit.SECONDS))
