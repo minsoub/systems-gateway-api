@@ -14,7 +14,11 @@ public enum ErrorCode {
     INVALID_HEADER_SITE_ID(902,"Header 정보가 유효하지 않습니다!!(Not found site_id)"),
     INVALID_HEADER_TOKEN(903, "Token 정보가 잘 못되었습니다!!!"),
 
-    SERVER_RESPONSE_ERROR(904, "API 서버에서 에러가 발생하였습니다!!!");
+    SERVER_RESPONSE_ERROR(904, "API 서버에서 에러가 발생하였습니다!!!"),
+
+    AUTH_SERVER_RESPONSE_ERROR(905, "Auth server error."),
+
+    AUTH_SERVER_AUTHORIZATION_FAIL(906, "Authorization fail.");
 
     private final int code;
     private final String message;

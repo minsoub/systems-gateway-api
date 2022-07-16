@@ -174,11 +174,11 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             httpStatus -> httpStatus != HttpStatus.OK,
             clientResponse -> clientResponse.createException()
                 .flatMap(
-                    it -> Mono.error(new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR))))
+                    it -> Mono.error(new GatewayException(ErrorCode.AUTH_SERVER_AUTHORIZATION_FAIL))))
         .bodyToMono(String.class)
         .doOnError(error -> {
           log.error("error {}", error.getMessage());
-          throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
+          throw new GatewayException(ErrorCode.AUTH_SERVER_RESPONSE_ERROR);
         });
   }
 
