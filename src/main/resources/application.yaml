@@ -9,6 +9,11 @@ management:
 spring:
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 5s
+        pool:
+          max-idle-time: 10
       metrics:
         enabled: true
       globalcors:
