@@ -52,7 +52,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     return Mono.defer(() -> {
       ServerHttpRequest serverHttpRequest = exchange.getRequest();
       HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
-      if (serverHttpRequest.getMethod() == HttpMethod.GET || exchange.getRequest().getHeaders().getContentType() == MediaType.MULTIPART_FORM_DATA) {
+      if (serverHttpRequest.getMethod() == HttpMethod.GET || exchange.getRequest().getHeaders().getContentType().toString().contains(MediaType.MULTIPART_FORM_DATA_VALUE)) {
         AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
         log.debug(auditRequest.toString());
         sqsSender.sendMessage(auditRequest, auditRequest.getPath());
