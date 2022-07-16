@@ -65,9 +65,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
         .maxIdleTime(Duration.ofSeconds(20))
         .maxLifeTime(Duration.ofSeconds(600))
         .pendingAcquireTimeout(Duration.ofSeconds(60))
-        .evictInBackground(Duration.ofSeconds(120))
-        .lifo()
-        .build();
+        .evictInBackground(Duration.ofSeconds(120)).build();
 
     HttpClient httpClient = HttpClient.create(provider)
         .doOnConnected(
