@@ -11,7 +11,7 @@ public final class GlobalConstant {
     public static final String MY_SITE_ID = "my_site_id";
 
     // 실제 확인해야 한다.
-    public static final String LRC_SITE_ID = "628cfe073d11df86c8933a87";
-    public static final String CPC_SITE_ID = "628cfe073d11df86c8933a88";
-    public static final String MNG_SITE_ID = "628cfe073d11df86c8933a89";
+    public static final String LRC_SITE_ID = "62a15f4ae4129b518b133127";
+    public static final String CPC_SITE_ID = "62a15f4ae4129b518b133128";
+    public static final String MNG_SITE_ID = "62a15f4ae4129b518b133129";
 }

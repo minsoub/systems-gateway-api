@@ -13,7 +13,7 @@ public enum ErrorCode {
     INVALID_HEADER_USER_IP(901, "Header 정보가 유효하지 않습니다!!(Not found user_ip)"),
     INVALID_HEADER_SITE_ID(902,"Header 정보가 유효하지 않습니다!!(Not found site_id)"),
     INVALID_HEADER_TOKEN(903, "Token 정보가 잘 못되었습니다!!!"),
-
+    EXPIRED_TOKEN(909, "Token expired"),
     SERVER_RESPONSE_ERROR(904, "API 서버에서 에러가 발생하였습니다!!!");
 
     private final int code;
