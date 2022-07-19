@@ -4,6 +4,7 @@ import com.bithumbsystems.config.Config;
 import com.bithumbsystems.config.constant.GlobalConstant;
 import com.bithumbsystems.exception.GatewayException;
 import com.bithumbsystems.exception.GatewayExceptionHandler;
+import com.bithumbsystems.exception.GatewayStatusException;
 import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.request.TokenRequest;
 import com.bithumbsystems.utils.CommonUtil;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
@@ -154,7 +156,13 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     return chain.filter(exchange.mutate().request(serverHttpRequest).build())
         .doOnError(e -> {
           log.error(e.getMessage());
-          throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
+          if(e instanceof org.springframework.web.server.ResponseStatusException){
+            String httpStatusText = String.valueOf(((ResponseStatusException) e).getStatus());
+            log.debug(">> ResponseStatusException:{}", httpStatusText);  // >> ResponseStatusException:504 GATEWAY_TIMEOUT
+            throw new GatewayStatusException(httpStatusText);
+          }else{
+            throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
+          }
         })
         .then(Mono.fromRunnable(() -> {
           if (config.isPostLogger()) {

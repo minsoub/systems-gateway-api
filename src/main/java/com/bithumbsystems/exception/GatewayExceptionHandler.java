@@ -28,6 +28,16 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             errorCode = ErrorCode.valueOf(e.getMessage()).getCode();
             errorMessage = ErrorCode.valueOf(e.getMessage()).getMessage();
             errorData = ErrorData.builder().code(errorCode).message(errorMessage).build();
+        }else if(ex.getClass() == GatewayStatusException.class){
+            try {
+                String err = ex.getMessage();
+                String[] arr = err.split(" ");  //ex) "504 GATEWAY_TIMEOUT" 형식. 공백으로 분리
+                errorCode = Integer.valueOf(arr[0]);
+                errorMessage = arr[1];
+                errorData = ErrorData.builder().code(errorCode).message(errorMessage).build();
+            }catch(RuntimeException e){
+                throw new GatewayException(ErrorCode.GATEWAY_SERVER_ERROR);
+            }
         } else {
             errorData = new ErrorData(ErrorCode.UNKNOWN_ERROR);
         }
@@ -37,10 +47,14 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             ObjectMapper objectMapper = new ObjectMapper();
             bytes = (objectMapper.writeValueAsString(new ErrorResponse(errorData))).getBytes(StandardCharsets.UTF_8);
         } catch (JsonProcessingException e) {
-            throw new GatewayException(ErrorCode.UNKNOWN_ERROR);
+            throw new GatewayException(ErrorCode.GATEWAY_SERVER_ERROR);
         }
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        if(ex.getClass() == GatewayStatusException.class) {
+            exchange.getResponse().setRawStatusCode(errorData.getCode());
+        }else{
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        }
         return exchange.getResponse().writeWith(Flux.just(buffer));
     }
 }
