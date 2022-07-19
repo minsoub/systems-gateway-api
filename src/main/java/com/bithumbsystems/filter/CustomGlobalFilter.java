@@ -99,10 +99,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
       }else if(error instanceof com.bithumbsystems.exception.GatewayStatusException) {
         throw new GatewayStatusException(error.getMessage());
-      }else{
-        log.debug("UNKNOWN_ERROR:{}", error.getMessage());
-        throw new GatewayException(ErrorCode.UNKNOWN_ERROR);
       }
+      return chain.filter(exchange.mutate().build());
     });
   }
 
