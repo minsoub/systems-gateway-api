@@ -147,8 +147,9 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
   private boolean isLrcTransferWithoutAuth(ServerWebExchange exchange, String siteId) {
     return siteId.equals(GlobalConstant.LRC_SITE_ID) && (
         tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath())
-            || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/join/valid")
-            == 0);
+                || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/join/valid") == 0
+                || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/password/reset/info") == 0
+    );
   }
 
   private Mono<Void> transferApi(Config config, ServerWebExchange exchange,
