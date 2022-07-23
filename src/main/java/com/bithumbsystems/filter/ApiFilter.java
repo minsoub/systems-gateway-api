@@ -147,8 +147,10 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
   private boolean isLrcTransferWithoutAuth(ServerWebExchange exchange, String siteId) {
     return siteId.equals(GlobalConstant.LRC_SITE_ID) && (
         tokenIgnoreLrc.contains(exchange.getRequest().getURI().getPath())
-                || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/join/valid") == 0
-                || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/password/reset/info") == 0
+            || (exchange.getRequest().getURI().getPath()).indexOf("/api/v1/lrc/user/join/valid")
+            == 0
+            || (exchange.getRequest().getURI().getPath()).indexOf(
+            "/api/v1/lrc/user/password/reset/info") == 0
     );
   }
 
@@ -157,11 +159,12 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     return chain.filter(exchange.mutate().request(serverHttpRequest).build())
         .doOnError(e -> {
           log.error(e.getMessage());
-          if(e instanceof org.springframework.web.server.ResponseStatusException){
+          if (e instanceof org.springframework.web.server.ResponseStatusException) {
             String httpStatusText = String.valueOf(((ResponseStatusException) e).getStatus());
-            log.debug(">> ResponseStatusException:{}", httpStatusText);  // >> ResponseStatusException:504 GATEWAY_TIMEOUT
+            log.debug(">> ResponseStatusException:{}",
+                httpStatusText);  // >> ResponseStatusException:504 GATEWAY_TIMEOUT
             throw new GatewayStatusException(httpStatusText);
-          }else{
+          } else {
             throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
           }
         })
@@ -183,7 +186,13 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
             httpStatus -> httpStatus != HttpStatus.OK,
             clientResponse -> clientResponse.createException()
                 .flatMap(
-                    it -> Mono.error(new GatewayException(ErrorCode.EXPIRED_TOKEN))))
+                    it -> {
+                      if (it.getStatusCode().equals(HttpStatus.CONFLICT)) {
+                        return Mono.error(new GatewayException(ErrorCode.USER_ALREADY_LOGIN));
+                      } else {
+                        return Mono.error(new GatewayException(ErrorCode.EXPIRED_TOKEN));
+                      }
+                    }))
         .bodyToMono(String.class)
         .doOnError(error -> {
           log.error("error {}", error.getMessage());
@@ -195,7 +204,8 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
     if (!request.getHeaders().containsKey(GlobalConstant.TOKEN_HEADER)) {
       throw new GatewayException(ErrorCode.INVALID_HEADER_TOKEN);
     }
-    String token = Objects.requireNonNull(request.getHeaders().getFirst(GlobalConstant.TOKEN_HEADER))
+    String token = Objects.requireNonNull(
+            request.getHeaders().getFirst(GlobalConstant.TOKEN_HEADER))
         .substring(GlobalConstant.BEARER.length())
         .trim();
 

@@ -1,9 +1,8 @@
 package com.bithumbsystems.model.enums;
 
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Getter
@@ -15,7 +14,9 @@ public enum ErrorCode {
     INVALID_HEADER_TOKEN(903, "Token 정보가 잘 못되었습니다!!!"),
     EXPIRED_TOKEN(909, "Token expired"),
     SERVER_RESPONSE_ERROR(904, "API 서버에서 에러가 발생하였습니다!!!"),
-    GATEWAY_SERVER_ERROR(905, "Gateway Server Error");
+    GATEWAY_SERVER_ERROR(905, "Gateway Server Error"),
+
+    USER_ALREADY_LOGIN(906, "User is already login");
 
     private final int code;
     private final String message;
