@@ -97,7 +97,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
       log.debug("CustomGlobalFilter error => {}", error.getMessage());
       if(error.getMessage().equals(ErrorCode.SERVER_RESPONSE_ERROR.toString())) {
         throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
-      }else if(error instanceof com.bithumbsystems.exception.GatewayStatusException) {
+      } else if(error.getMessage().equals(ErrorCode.USER_ALREADY_LOGIN.toString())) {
+        throw new GatewayException(ErrorCode.USER_ALREADY_LOGIN);
+      } else if(error instanceof com.bithumbsystems.exception.GatewayStatusException) {
         throw new GatewayStatusException(error.getMessage());
       }
       return chain.filter(exchange.mutate().build());

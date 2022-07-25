@@ -196,6 +196,9 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
         .bodyToMono(String.class)
         .doOnError(error -> {
           log.error("error {}", error.getMessage());
+          if(error.getMessage().equals(ErrorCode.USER_ALREADY_LOGIN.toString())) {
+            throw new GatewayException(ErrorCode.USER_ALREADY_LOGIN);
+          }
           throw new GatewayException(ErrorCode.EXPIRED_TOKEN);
         });
   }
