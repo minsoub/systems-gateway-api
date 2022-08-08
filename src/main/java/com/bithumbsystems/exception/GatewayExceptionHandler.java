@@ -53,7 +53,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         if(ex.getClass() == GatewayStatusException.class) {
             exchange.getResponse().setRawStatusCode(errorData.getCode());
         }else{
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
         }
         return exchange.getResponse().writeWith(Flux.just(buffer));
     }
