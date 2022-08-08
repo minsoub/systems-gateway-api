@@ -20,7 +20,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         log.warn("in GATEWAY Exception handler : " + ex);
         ErrorData errorData;
-        int errorCode;
+        int errorCode = -1;
         String errorMessage;
 
         if (ex.getClass() == GatewayException.class) {
@@ -51,9 +51,22 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         }
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
         if(ex.getClass() == GatewayStatusException.class) {
-            exchange.getResponse().setRawStatusCode(errorData.getCode());
-        }else{
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            if (errorCode == ErrorCode.EXPIRED_TOKEN.getCode())
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            else
+                exchange.getResponse().setRawStatusCode(errorData.getCode());
+        }else if(ex.getClass() == GatewayException.class) {
+            try {
+                if (errorCode == ErrorCode.EXPIRED_TOKEN.getCode())
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                else
+                    exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+            } catch (Exception e) {
+                log.debug(e);
+                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+            }
+        }else {
+            exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
         }
         return exchange.getResponse().writeWith(Flux.just(buffer));
     }
