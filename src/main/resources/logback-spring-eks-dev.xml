@@ -3,7 +3,7 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
-    <property name="LOG_DIR" value="/home/smart-admin-gateway-api/logs"/>
+    <property name="LOG_DIR" value="/app/logs"/>
     <property name="LOG_PATH_NAME" value="${LOG_DIR}/spring.log"/>
     <property name="ERROR_LOG_PATH_NAME" value="${LOG_DIR}/error/spring-error.log"/>
 

@@ -1,10 +1,12 @@
 cloud:
   aws:
     credentials:
-      profile-name: ${aws.default.profile:dev}
+      profile-name: ${aws.default.profile:eks-dev}
       instanceProfile: true
     stack:
       auto: ${aws.stack.auto:false}
+    ssm:
+      endpoint: https://ssm.ap-northeast-2.amazonaws.com
     region:
       static: ${aws.region:ap-northeast-2}
       auto: ${aws.region.auto:false}

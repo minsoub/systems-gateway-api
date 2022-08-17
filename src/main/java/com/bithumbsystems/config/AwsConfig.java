@@ -18,7 +18,7 @@ import software.amazon.awssdk.services.kms.KmsAsyncClient;
 @Getter
 @Setter
 @Configuration
-@Profile("dev|prod|eks-dev")
+@Profile("dev|qa|prod|eks-dev")
 public class AwsConfig {
 
   private final AwsProperties awsProperties;

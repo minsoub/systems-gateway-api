@@ -4,6 +4,7 @@ import static com.bithumbsystems.config.constant.GlobalConstant.KMS_ALIAS_NAME;
 import static com.bithumbsystems.config.constant.GlobalConstant.SQS_URL;
 
 import com.bithumbsystems.config.properties.AwsProperties;
+import java.net.URI;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +37,7 @@ public class LocalParameterStoreConfig {
         this.ssmClient = SsmClient.builder()
                 .credentialsProvider(credentialsProvider.getProvider()) // 로컬에서 개발로 붙을때 사용
                 .region(Region.of(awsProperties.getRegion()))
+                .endpointOverride(URI.create(awsProperties.getSsmEndPoint()))
                 .build();
 
         // KMS Parameter Key
