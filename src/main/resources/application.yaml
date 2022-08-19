@@ -22,6 +22,8 @@ spring:
             allowedOrigins: "*"
             allowedHeaders: "*"
             allowedMethods: "*"
+  pid:
+    file: ${instance.pid}
 ---
 spring:
   config:
