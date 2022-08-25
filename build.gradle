@@ -4,8 +4,13 @@ plugins {
     id 'java'
 }
 
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'local' : profile
+
 group 'com.bithumbsystems'
-version '1.0-SNAPSHOT'
+version = '0.0.1-SNAPSHOT'
+if ("${profile}".compareTo('prod') == 0){
+    version = '0.0.1-RELEASE'
+}
 sourceCompatibility = '11'
 
 repositories {
