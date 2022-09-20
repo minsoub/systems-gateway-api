@@ -16,3 +16,5 @@ cloud:
       prefix: /smartadmin
       kms-name: kms
       message-name: message
+    sqs:
+      endpoint: https://vpce-0252aacd7d5b8ecbb-0d9ak2w8.sqs.ap-northeast-2.vpce.amazonaws.com

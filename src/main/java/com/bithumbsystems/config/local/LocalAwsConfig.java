@@ -1,5 +1,6 @@
 package com.bithumbsystems.config.local;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import com.bithumbsystems.config.properties.AwsProperties;
@@ -46,9 +47,14 @@ public class LocalAwsConfig {
 
   @Bean
   public AmazonSQSAsync amazonSQS() {
+    var endpointConfig = new AwsClientBuilder.EndpointConfiguration(
+        awsProperties.getSqsEndPoint(),
+        awsProperties.getRegion()
+    );
+
     return AmazonSQSAsyncClientBuilder.standard()
-        .withCredentials(provider)
-        .withRegion(awsProperties.getRegion())
+//        .withRegion(awsProperties.getRegion())
+        .withEndpointConfiguration(endpointConfig)
         .build();
   }
 }

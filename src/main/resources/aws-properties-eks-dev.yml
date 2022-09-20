@@ -16,3 +16,5 @@ cloud:
       prefix: /smartadmin
       kms-name: kms
       message-name: message
+    sqs:
+      endpoint: https://sqs.ap-northeast-2.amazonaws.com
