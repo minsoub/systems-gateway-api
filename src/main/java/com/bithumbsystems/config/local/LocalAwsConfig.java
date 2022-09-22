@@ -55,6 +55,7 @@ public class LocalAwsConfig {
     return AmazonSQSAsyncClientBuilder.standard()
 //        .withRegion(awsProperties.getRegion())
         .withEndpointConfiguration(endpointConfig)
+            .withCredentials(provider)
         .build();
   }
 }
