@@ -17,4 +17,5 @@ cloud:
       kms-name: kms
       message-name: message
     sqs:
+      queue-name: bs-audit_log_queue.fifo
       endpoint: https://vpce-0252aacd7d5b8ecbb-0d9ak2w8.sqs.ap-northeast-2.vpce.amazonaws.com

@@ -16,6 +16,9 @@ public class AwsProperties {
   @Value("${cloud.aws.ssm.endpoint}")
   private String ssmEndPoint;
 
+  @Value("${cloud.aws.sqs.queue-name}")
+  private String sqsQueueName;
+
   @Value("${cloud.aws.sqs.endpoint}")
   private String sqsEndPoint;
 
@@ -28,6 +31,6 @@ public class AwsProperties {
   @Value("${cloud.aws.param-store.message-name}")
   private String paramStoreMessageName;
 
-  private String sqsUrl;
+//  private String sqsUrl;
   private String kmsKey;
 }

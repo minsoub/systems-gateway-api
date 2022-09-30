@@ -22,7 +22,7 @@ public class AwsSQSSenderImpl<T> implements AwsSQSSender<T> {
   public SendMessageResult sendMessage(T auditLogRequest, String groupId) {
     log.debug("AwsSQSSender Thread {}" , Thread.currentThread().getName());
     return amazonSQS.sendMessage(
-        new SendMessageRequest(awsProperties.getSqsUrl(), new Gson().toJson(auditLogRequest))
+        new SendMessageRequest(awsProperties.getSqsEndPoint() + "/" + awsProperties.getSqsQueueName(), new Gson().toJson(auditLogRequest))
             .withMessageGroupId(groupId)
             .withMessageDeduplicationId(UUID.randomUUID().toString())
         );
