@@ -41,7 +41,7 @@ public class ParameterStoreConfig {
 
         // KMS Parameter Key
         this.awsProperties.setKmsKey(getParameterValue(awsProperties.getParamStoreKmsName().trim(), GlobalConstant.KMS_ALIAS_NAME));
-        this.awsProperties.setSqsUrl(getParameterValue(awsProperties.getParamStoreMessageName().trim(), SQS_URL));
+//        this.awsProperties.setSqsUrl(getParameterValue(awsProperties.getParamStoreMessageName().trim(), SQS_URL));
     }
 
     protected String getParameterValue(String storeName, String type) {

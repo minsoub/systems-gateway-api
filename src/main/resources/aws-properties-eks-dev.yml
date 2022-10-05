@@ -17,4 +17,5 @@ cloud:
       kms-name: kms
       message-name: message
     sqs:
+      queue-name: audit_log_queue_dev.fifo
       endpoint: https://sqs.ap-northeast-2.amazonaws.com

@@ -39,7 +39,7 @@ sites:
   smart-admin-cpc-url: http://localhost:8083
   lrc-app-url: http://localhost:8084
   cpc-app-url: http://localhost:8085
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email,/api/v1/lrc/user/otp/init,/api/v1/lrc/user/otp/reset,/api/v1/lrc/user/otp/reset2
 ---
 spring:
   config:
@@ -55,7 +55,7 @@ sites:
   smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email,/api/v1/lrc/user/otp/init,/api/v1/lrc/user/otp/reset,/api/v1/lrc/user/otp/reset2
 ---
 spring:
   config:
@@ -71,7 +71,7 @@ sites:
   smart-admin-cpc-url: http://bs-dev-cpc-mng-api-intnlb-35421a7834815ba8.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://bs-dev-lrc-app-api-intnlb-22b0aada38b8e44f.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://bs-dev-cpc-app-api-intnlb-0e432ee06a0e5273.elb.ap-northeast-2.amazonaws.com
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email,/api/v1/lrc/user/otp/init,/api/v1/lrc/user/otp/reset,/api/v1/lrc/user/otp/reset2
 ---
 spring:
   config:
@@ -87,7 +87,7 @@ sites:
   smart-admin-cpc-url: http://bs-qa-cpc-mng-api-intnlb-e7286b5ad5e10d14.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://bs-qa-lrc-app-api-intnlb-5f2e6b73955e1314.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://bs-qa-cpc-app-api-intnlb-77c5d2580a3aa06e.elb.ap-northeast-2.amazonaws.com
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email,/api/v1/lrc/user/otp/init,/api/v1/lrc/user/otp/reset,/api/v1/lrc/user/otp/reset2
 ---
 spring:
   config:
@@ -103,7 +103,7 @@ sites:
   smart-admin-cpc-url: http://bs-cpc-mng-api-intnlb-a7b27e9ac37c95fd.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://bs-lrc-app-api-intnlb-1f9ef12d58cd84a1.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://bs-cpc-app-api-intnlb-35e666af71367f3f.elb.ap-northeast-2.amazonaws.com
-  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email,/api/v1/lrc/user/otp/init,/api/v1/lrc/user/otp/reset,/api/v1/lrc/user/otp/reset2
 ---
 # Spring cloud gateway setup
 #spring:
