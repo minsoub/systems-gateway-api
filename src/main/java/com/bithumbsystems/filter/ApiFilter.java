@@ -212,12 +212,17 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
         .substring(GlobalConstant.BEARER.length())
         .trim();
 
+    String role = request.getHeaders().getFirst(GlobalConstant.ACTIVE_ROLE);
+
     log.debug("token => {}", token);
     // Token 검증
     TokenRequest req = TokenRequest.builder()
-        .site_id(siteId)
-        .user_ip(userIp)
+        .requestUri(request.getURI().getPath())
+        .method(request.getMethod())
+        .siteId(siteId)
+        .userIp(userIp)
         .token(token)
+        .activeRole(role)
         .build();
 
     log.debug("token data => {}", req);
