@@ -15,8 +15,10 @@ public enum ErrorCode {
     EXPIRED_TOKEN(909, "Token expired"),
     SERVER_RESPONSE_ERROR(904, "API 서버에서 에러가 발생하였습니다!!!"),
     GATEWAY_SERVER_ERROR(905, "Gateway Server Error"),
+    USER_ALREADY_LOGIN(906, "User is already login"),
 
-    USER_ALREADY_LOGIN(906, "User is already login");
+    AUTHORIZATION_FAIL(907,"Fail Authorization");
+
 
     private final int code;
     private final String message;

@@ -53,12 +53,16 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         if(ex.getClass() == GatewayStatusException.class) {
             if (errorCode == ErrorCode.EXPIRED_TOKEN.getCode())
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            else if  (errorCode == ErrorCode.AUTHORIZATION_FAIL.getCode())
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
             else
                 exchange.getResponse().setRawStatusCode(errorData.getCode());
         }else if(ex.getClass() == GatewayException.class) {
             try {
                 if (errorCode == ErrorCode.EXPIRED_TOKEN.getCode())
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                else if  (errorCode == ErrorCode.AUTHORIZATION_FAIL.getCode())
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 else
                     exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
             } catch (Exception e) {

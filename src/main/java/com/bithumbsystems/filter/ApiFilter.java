@@ -198,8 +198,11 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
           log.error("error {}", error.getMessage());
           if(error.getMessage().equals(ErrorCode.USER_ALREADY_LOGIN.toString())) {
             throw new GatewayException(ErrorCode.USER_ALREADY_LOGIN);
+          } else if(error.getMessage().equals(ErrorCode.AUTHORIZATION_FAIL.toString())) {
+            throw new GatewayException(ErrorCode.AUTHORIZATION_FAIL);
+          } else {
+            throw new GatewayException(ErrorCode.EXPIRED_TOKEN);
           }
-          throw new GatewayException(ErrorCode.EXPIRED_TOKEN);
         });
   }
 
