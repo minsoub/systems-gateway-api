@@ -189,7 +189,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
                     it -> {
                       if (it.getStatusCode().equals(HttpStatus.CONFLICT)) {
                         return Mono.error(new GatewayException(ErrorCode.USER_ALREADY_LOGIN));
-                      } else if(it.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+                      } else if(it.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
                         return Mono.error(new GatewayException(ErrorCode.AUTHORIZATION_FAIL));
                       } else {
                         return Mono.error(new GatewayException(ErrorCode.EXPIRED_TOKEN));
