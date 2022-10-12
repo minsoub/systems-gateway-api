@@ -91,7 +91,7 @@ sites:
 ---
 spring:
   config:
-    import: classpath:aws-properties.yml
+    import: classpath:aws-properties-prod.yml
     activate:
       on-profile: prod
 logging:
