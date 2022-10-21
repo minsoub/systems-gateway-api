@@ -60,7 +60,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="DEBUG">
+    <root level="ERROR">
         <appender-ref ref="ROLLING_ROOT"/>
         <appender-ref ref="STDOUT"/>
     </root>
