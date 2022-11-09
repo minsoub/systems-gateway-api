@@ -18,9 +18,8 @@ public enum ErrorCode {
     SERVER_RESPONSE_ERROR(904, "API 서버에서 에러가 발생하였습니다!!!"),
     GATEWAY_SERVER_ERROR(905, "Gateway Server Error"),
     USER_ALREADY_LOGIN(906, "User is already login"),
-    SERVER_RESPONSE_ERROR(904, "API 서버에서 에러가 발생하였습니다!!!"),
     AUTH_SERVER_RESPONSE_ERROR(905, "Auth server error."),
-    AUTH_SERVER_AUTHORIZATION_FAIL(906, "Authorization fail.");
+    AUTH_SERVER_AUTHORIZATION_FAIL(906, "Authorization fail."),
     AUTHORIZATION_FAIL(907,"Fail Authorization");
 
 
