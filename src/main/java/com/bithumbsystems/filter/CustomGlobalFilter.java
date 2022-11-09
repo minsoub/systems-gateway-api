@@ -3,6 +3,7 @@ package com.bithumbsystems.filter;
 import com.amazonaws.services.sqs.model.InvalidMessageContentsException;
 import com.bithumbsystems.config.constant.GlobalConstant;
 import com.bithumbsystems.exception.GatewayException;
+import com.bithumbsystems.exception.GatewayStatusException;
 import com.bithumbsystems.filter.sender.AwsSQSSender;
 import com.bithumbsystems.model.enums.ErrorCode;
 import com.bithumbsystems.model.request.AuditLogRequest;
@@ -52,7 +53,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     return Mono.defer(() -> {
       ServerHttpRequest serverHttpRequest = exchange.getRequest();
       HttpHeaders httpHeaders = serverHttpRequest.getHeaders();
-      if (serverHttpRequest.getMethod() == HttpMethod.GET || exchange.getRequest().getHeaders().getContentType() == MediaType.MULTIPART_FORM_DATA) {
+      if (serverHttpRequest.getMethod() == HttpMethod.GET
+          || (exchange.getRequest().getHeaders().getContentType() != null
+              && exchange.getRequest().getHeaders().getContentType().toString().contains(MediaType.MULTIPART_FORM_DATA_VALUE))) {
         AuditLogRequest auditRequest = getAuditLogRequest(httpHeaders, serverHttpRequest);
         log.debug(auditRequest.toString());
         sqsSender.sendMessage(auditRequest, auditRequest.getPath());
@@ -94,6 +97,10 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
       log.debug("CustomGlobalFilter error => {}", error.getMessage());
       if(error.getMessage().equals(ErrorCode.SERVER_RESPONSE_ERROR.toString())) {
         throw new GatewayException(ErrorCode.SERVER_RESPONSE_ERROR);
+      } else if(error.getMessage().equals(ErrorCode.USER_ALREADY_LOGIN.toString())) {
+        throw new GatewayException(ErrorCode.USER_ALREADY_LOGIN);
+      } else if(error instanceof com.bithumbsystems.exception.GatewayStatusException) {
+        throw new GatewayStatusException(error.getMessage());
       }
       return chain.filter(exchange.mutate().build());
     });

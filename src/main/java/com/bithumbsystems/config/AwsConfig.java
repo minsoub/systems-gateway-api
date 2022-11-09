@@ -1,5 +1,6 @@
 package com.bithumbsystems.config;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import com.bithumbsystems.config.properties.AwsProperties;
@@ -18,7 +19,7 @@ import software.amazon.awssdk.services.kms.KmsAsyncClient;
 @Getter
 @Setter
 @Configuration
-@Profile("dev|prod|eks-dev")
+@Profile("dev|qa|prod|eks-dev")
 public class AwsConfig {
 
   private final AwsProperties awsProperties;
@@ -34,8 +35,14 @@ public class AwsConfig {
 
   @Bean
   public AmazonSQSAsync amazonSQS() {
+    var endpointConfig = new AwsClientBuilder.EndpointConfiguration(
+        awsProperties.getSqsEndPoint(),
+        awsProperties.getRegion()
+    );
+    
     return AmazonSQSAsyncClientBuilder.standard()
-        .withRegion(awsProperties.getRegion())
+//        .withRegion(awsProperties.getRegion())
+        .withEndpointConfiguration(endpointConfig)
         .build();
   }
 

@@ -17,15 +17,6 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class UserAuthRoute {
 
-//    @Value("${sites.auth-url}")
-//    private String authUrl;
-//    @Value("${sites.smart-admin-url}")
-//    private String smartAdminUrl;
-//    @Value("${sites.lrc-app-url}")
-//    private String lrcAppUrl;
-//    @Value("${sites.cpc-app-url}")
-//    private String cpcAppUrl;
-
     private final UrlProperties urlProperties;
     private final UserFilter userFilter;
     private final AuthFilter authFilter;

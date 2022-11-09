@@ -4,6 +4,8 @@ cloud:
       profile-name: ${aws.default.profile:dev}
     stack:
       auto: ${aws.stack.auto:false}
+    ssm:
+      endpoint: https://ssm.ap-northeast-2.amazonaws.com
     region:
       static: ${aws.region:ap-northeast-2}
       auto: ${aws.region.auto:false}
@@ -13,3 +15,6 @@ cloud:
       prefix: /smartadmin
       kms-name: kms
       message-name: message
+    sqs:
+      queue-name: audit_log_queue_local.fifo
+      endpoint: https://sqs.ap-northeast-2.amazonaws.com

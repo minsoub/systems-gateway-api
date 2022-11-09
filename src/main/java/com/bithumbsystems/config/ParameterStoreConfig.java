@@ -4,6 +4,7 @@ import static com.bithumbsystems.config.constant.GlobalConstant.SQS_URL;
 
 import com.bithumbsystems.config.constant.GlobalConstant;
 import com.bithumbsystems.config.properties.AwsProperties;
+import java.net.URI;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -18,7 +19,7 @@ import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
 @Log4j2
 @Data
 @Configuration
-@Profile("dev|prod|eks-dev")
+@Profile("dev|qa|prod|eks-dev")
 public class ParameterStoreConfig {
 
     private SsmClient ssmClient;
@@ -35,11 +36,12 @@ public class ParameterStoreConfig {
 
         this.ssmClient = SsmClient.builder()
             .region(Region.of(awsProperties.getRegion()))
+            .endpointOverride(URI.create(awsProperties.getSsmEndPoint()))
             .build();
 
         // KMS Parameter Key
         this.awsProperties.setKmsKey(getParameterValue(awsProperties.getParamStoreKmsName().trim(), GlobalConstant.KMS_ALIAS_NAME));
-        this.awsProperties.setSqlUrl(getParameterValue(awsProperties.getParamStoreMessageName().trim(), SQS_URL));
+//        this.awsProperties.setSqsUrl(getParameterValue(awsProperties.getParamStoreMessageName().trim(), SQS_URL));
     }
 
     protected String getParameterValue(String storeName, String type) {
