@@ -65,8 +65,8 @@ spring:
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
 sites:
-  auth-url: http://k8s-systemsd-systemsa-b1008c664c-a3ca74a448432ee0.elb.ap-northeast-2.amazonaws.com
-  smart-admin-url: http://k8s-systemsd-systemsm-3411cecba4-a185780c02b3ce0f.elb.ap-northeast-2.amazonaws.com
+  auth-url: http://k8s-systemsp-systemsa-e02c378086-acc7c1e658dd7475.elb.ap-northeast-2.amazonaws.com
+  smart-admin-url: http://k8s-systemsp-systemsm-44af8aebfc-fdd7585d563eeb6b.elb.ap-northeast-2.amazonaws.com
   smart-admin-lrc-url: http://k8s-systemsd-lrcmngap-6f8cba9e8e-5345f9a61df958fe.elb.ap-northeast-2.amazonaws.com
   smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
