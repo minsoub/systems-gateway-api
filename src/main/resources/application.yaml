@@ -68,7 +68,7 @@ sites:
   auth-url: http://k8s-systemsp-systemsa-e02c378086-acc7c1e658dd7475.elb.ap-northeast-2.amazonaws.com
   smart-admin-url: http://k8s-systemsp-systemsm-44af8aebfc-fdd7585d563eeb6b.elb.ap-northeast-2.amazonaws.com
   smart-admin-lrc-url: http://k8s-systemsd-lrcmngap-6f8cba9e8e-5345f9a61df958fe.elb.ap-northeast-2.amazonaws.com
-  smart-admin-cpc-url: http://k8s-systemsd-cpcmngap-b5f81d5545-2ecde87097b8d7bf.elb.ap-northeast-2.amazonaws.com
+  smart-admin-cpc-url: http://k8s-systemsp-cpcmngap-4b257d6ab0-ed1404229b40ed19.elb.ap-northeast-2.amazonaws.com
   lrc-app-url: http://k8s-systemsd-lrcappap-51a49fed08-97638021b6a67650.elb.ap-northeast-2.amazonaws.com
   cpc-app-url: http://k8s-systemsd-cpcappap-0fd4253b97-c2bdae0b9ed776ca.elb.ap-northeast-2.amazonaws.com
   lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email,/api/v1/lrc/user/otp/init,/api/v1/lrc/user/otp/reset,/api/v1/lrc/user/otp/reset2
