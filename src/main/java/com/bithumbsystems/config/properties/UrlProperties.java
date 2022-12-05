@@ -14,6 +14,7 @@ public class UrlProperties {
     private String smartAdminUrl;
     private String smartAdminLrcUrl;
     private String smartAdminCpcUrl;
+    private String smartAdminCmsUrl;
     private String lrcAppUrl;
     private String cpcAppUrl;
     private String lrcTokenIgnore;

@@ -50,6 +50,7 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
   private String lrcAppUrl;
   @Value("${sites.cpc-app-url}")
   private String cpcAppUrl;
+
   @Value("#{'${sites.lrc-token-ignore}'.split(',')}")
   private List<String> tokenIgnoreLrc;
 
