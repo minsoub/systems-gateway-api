@@ -1,0 +1,21 @@
+cloud:
+  aws:
+    credentials:
+      profile-name: ${aws.default.profile:localstack}
+      instanceProfile: true
+    stack:
+      auto: ${aws.stack.auto:false}
+    ssm:
+      endpoint: http://10.20.163.86:4566
+    region:
+      static: ${aws.region:ap-northeast-2}
+      auto: ${aws.region.auto:false}
+    param-store:
+      enabled: true
+      fail-fast: true
+      prefix: /smartadmin
+      kms-name: kms
+      message-name: message
+    sqs:
+      queue-name: bs-audit_log_queue_localstack.fifo
+      endpoint: http://10.20.163.86:4566

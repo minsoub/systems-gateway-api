@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.kms.KmsAsyncClient;
 @Setter
 @Configuration
 @RequiredArgsConstructor
-@Profile("local")
+@Profile("local|localstack")
 public class LocalAwsConfig {
 
   @Value("${cloud.aws.credentials.profile-name}")

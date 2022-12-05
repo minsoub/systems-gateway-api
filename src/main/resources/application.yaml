@@ -44,6 +44,23 @@ sites:
 ---
 spring:
   config:
+    import: classpath:aws-properties-localstack.yml
+    activate:
+      on-profile: localstack
+logging:
+  config: classpath:logback-spring-local.xml
+sites:
+  auth-url: http://localhost:8080
+  smart-admin-url: http://localhost:8081
+  smart-admin-lrc-url: http://localhost:8082
+  smart-admin-cpc-url: http://localhost:8083
+  smart-admin-cms-url: http://localhost:8086
+  lrc-app-url: http://localhost:8084
+  cpc-app-url: http://localhost:8085
+  lrc-token-ignore: /api/v1/lrc/captcha/siteverify,/api/v1/lrc/scam/mail,/api/v1/lrc/user/join,/api/v1/lrc/user/join/certification,/api/v1/lrc/user/password/reset,/api/v1/lrc/user/password/reset/email,/api/v1/lrc/user/otp/init,/api/v1/lrc/user/otp/reset,/api/v1/lrc/user/otp/reset2
+---
+spring:
+  config:
     import: classpath:aws-properties-eks-dev.yml
     activate:
       on-profile: eks-dev

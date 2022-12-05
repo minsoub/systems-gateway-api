@@ -14,7 +14,7 @@ import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 @Getter
 @Configuration
 @RequiredArgsConstructor
-@Profile("local")
+@Profile("local|localstack")
 public class CredentialsProvider {
 
     @Value("${cloud.aws.credentials.profile-name}")
