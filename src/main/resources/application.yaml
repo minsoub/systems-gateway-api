@@ -16,12 +16,12 @@ spring:
           max-idle-time: 20
       metrics:
         enabled: true
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedHeaders: "*"
-            allowedMethods: "*"
+#      globalcors:
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins: "*"
+#            allowedHeaders: "*"
+#            allowedMethods: "*"
   pid:
     file: ${instance.pid}
 ---
