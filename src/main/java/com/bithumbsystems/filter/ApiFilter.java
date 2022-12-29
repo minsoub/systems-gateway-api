@@ -222,10 +222,14 @@ public class ApiFilter extends AbstractGatewayFilterFactory<Config> {
 
     log.debug("token => {}", token);
     // Token 검증
+    String mySiteId = request.getHeaders().get(GlobalConstant.MY_SITE_ID) != null ?
+            Objects.requireNonNull(request.getHeaders().get(GlobalConstant.MY_SITE_ID)).get(0) : "";
+
     TokenRequest req = TokenRequest.builder()
         .requestUri(request.getURI().getPath())
         .method(request.getMethod())
         .siteId(siteId)
+        .mySiteId(mySiteId)
         .userIp(userIp)
         .token(token)
         .activeRole(role)
