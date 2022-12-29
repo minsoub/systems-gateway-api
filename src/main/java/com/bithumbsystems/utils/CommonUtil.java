@@ -31,7 +31,10 @@ public class CommonUtil {
         if (!StringUtils.hasLength(ip)  &&  request.getHeaders().containsKey("X-Real-IP")) {
             ip = request.getRemoteAddress().getAddress().getAddress().toString();
         }
-
-        return ip;
+        if (ip.indexOf(",") != -1) {
+            return ip.split(",")[0];
+        } else {
+            return ip;
+        }
     }
 }
